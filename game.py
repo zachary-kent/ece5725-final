@@ -1,5 +1,6 @@
 import time
 import pygame
+from pygame.locals import *
 import board
 
 pygame.init()
@@ -21,6 +22,10 @@ running = True
 try:
     while running:
         game_board.draw(screen, width, height, clock)
+        for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                print(event.key)
+                
+                
 finally:
-
     pygame.quit()
