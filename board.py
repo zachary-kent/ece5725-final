@@ -4,26 +4,74 @@ from enum import Enum
 import enum
 
 
+# Represents a cardinal direction
 class Dir(Enum):
     UP = enum.auto()
     DOWN = enum.auto()
     LEFT = enum.auto()
     RIGHT = enum.auto()
 
-    # def angle(self):
-    #     match self:
-    #         case self.UP:
-    #             return 1
-    #         case self.DOWN:
-    #             return -1
-    #         case self.LEFT:
-    #             return 2
-    #         case self.RIGHT:
-    #             return 0
-
+    # Calculates the angle to 180 degrees, in units of 90 degrees
+    def angle_to_left(self):
+        if self == Dir.UP:
+            return 1
+        if self == Dir.DOWN:
+            return -1
+        if self == Dir.LEFT:
+            return 0
+        if self == Dir.RIGHT:
+            return 2
 
 def create_board(side):
     return np.zeros((side, side), int)
+
+# Filter out the zero elements of a given array, leaving only the nonzero elements
+def filter_nonzeros(arr):
+    nonzeros = []
+    for i in arr:
+        if i != 0:
+            nonzeros.append(i)
+    return nonzeros
+
+
+# Shifts a row left according to 2048 semantics and returns the resulting row
+# Empty tiles are represented with zeros
+def shift_row(row):
+    nonzeros = filter_nonzeros(row)
+    shifted_tiles = []
+    i = 1
+    while i < len(nonzeros):
+        right_tile = nonzeros[i]
+        left_tile = nonzeros[i - 1]
+        # Try to combine the tiles at index i - 1 and i
+        if left_tile == right_tile:
+            # If we can merge the tiles, add a doubled tile to the result
+            # and bump the index by 2 to consider the next unmerged tile
+            shifted_tiles.append(left_tile + 1)
+            i += 2
+        else:
+            # Otherwise, we cannot merge the tile at index i,
+            # so we append it to the result unchanged. We bump the counter by
+            # 1 to try to merge the tiles at indices i and i + 1
+            shifted_tiles.append(left_tile)
+            i += 1
+    # If we did not merge the second to last and last tile, we have to add the
+    # last tile unchanged to the result
+    if i == len(nonzeros):
+        shifted_tiles.append(nonzeros[-1])
+    # We pad the "empty space" created by merging and shifting tiles with empty tiles
+    pad_length = len(row) - len(shifted_tiles)
+    return np.pad(shifted_tiles, (0, pad_length), 'constant')
+
+# Shifts a matrix left according to the 2048 semantics
+def shift_left(matrix):
+    return np.array([ shift_row(row) for row in matrix ])
+
+# Shifts a matrix in a given direction according to the 2048 semantics
+def shift(matrix, dir):
+    # Rotate the matrix so we shift left, and then rotate back 
+    angle = dir.angle_to_left()
+    return np.rot90(shift_left(np.rot90(matrix, angle)), -angle)
 
 
 white = (255, 255, 255)
@@ -39,49 +87,24 @@ light_yellow = (255, 255, 191)
 tile_colors = [gray, light_gray, beige, light_orange,
                orange, light_red, red, light_yellow]
 
-
-
+# Represents a 2048 board
 class Board:
-    def __init__(self, side):
-        self.side = side
-        self.board = create_board(side)
+    def __init__(self, arg=4):
+        if isinstance(arg, int):
+            # initalize with side length
+            self.side = arg
+            self.board = create_board(self.side)
+        else:
+            # initialize with matrix
+            self.side = len(arg)
+            self.board = np.array(arg)
 
-    def in_bounds(self, i, j):
-        return 0 <= i < self.side and 0 <= j < self.side
-
-    def erase(self, i, j):
-        self.board[i][j] = 0
-
-    def is_empty(self, i, j):
-        return self.at(i, j) == 0
-
-    def shift_tile(self, i, j):
-        tiles_moved = 0
-        # Value of tile we are shifting across board
-        tile_value = self.at(i, j)
-        # Erase current tile
-        self.erase(i, j)
-        # Move tile while in bounds and next position is unoccupied
-        while self.in_bounds(i + 1, j) and self.is_empty(i + 1, j):
-            tiles_moved += 1
-            i += 1
-        # Set value at tile with position moved to
-        self.board[i][j] = tile_value
-        # Combine with tile to right if exists and has same value
-        if self.in_bounds(i + 1, j) and self.at(i, j) == self.at(i + 1, j):
-            self.erase(i, j)
-            self.board[i + 1][j] += 1
-            tiles_moved += 1
-        return tiles_moved
-
-    def shift_right(self):
-        for i in range(self.side):
-            for j in range(self.side):
-                tiles_moved = self.shift_tile(i, j)
-                pass
-
+    def __str__(self):
+        return str(np.array([ [ 0 if i == 0 else 2 ** i for i in row ] for row in self.board ]))
+        
+    # Shift this 2048 board in place
     def shift(self, dir: Dir):
-        angle = dir.angle()
+        self.board = shift(self.board, dir)
 
     def at(self, i, j):
         return self.board[i][j]
