@@ -10,11 +10,13 @@ clock = pygame.time.Clock()
 
 
 board_size = 4
-game_board = board.Board(board_size)
+game_board = board.Board([
+    [1, 1, 0, 1],
+    [2, 1, 0, 0],
+    [2, 1, 0, 0],
+    [2, 1, 0, 0],
+])
 
-
-# draw board
-game_board.test_gui()
 running = True
 try:
     while running:
