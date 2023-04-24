@@ -2,6 +2,7 @@ import pygame
 import numpy as np
 from enum import Enum
 import enum
+import random
 
 
 # Represents a cardinal direction
@@ -124,31 +125,36 @@ class Board:
     def at(self, i, j):
         return self.board[i][j]
 
+    def add_tile(self):
+        i = random.randrange(self.side)
+        j = random.randrange(self.side)
+        v = 1 if random.randint(0, 1) == 0 else 2
+        while self.at(i, j) != 0:
+            i = random.randrange(self.side)
+            j = random.randrange(self.side)
+        self.board[i][j] = v
+
     def draw(self, screen, width, height, clock):
-        count = 0
         font_size = height // self.side // 2
         font = pygame.font.Font(None, font_size)
         tile_height = height // self.side
         tile_width = width // self.side
         for i in range(self.side):
             for j in range(self.side):
-                tile_exponent = self.at(i, j)
-                to_shift = tile_width / 2
+                # print(self.at(i, j).dtype)
+                tile_exponent = int(self.at(i, j))
+                to_shift = tile_width // 2
                 tileX = j * tile_width + to_shift
-                tileY = i * tile_height + to_shift / 2
+                tileY = i * tile_height + to_shift // 2
 
-                tile_color = tile_colors[tile_exponent + count]
-                if count < len(tile_colors) - 2:
-                    count = count + 0
-                else:
-                    count = 0
+                tile_color = tile_colors[tile_exponent]
 
                 text_color = white
                 if tile_color == tile_2 or tile_color == tile_4:
                     text_color = gray
 
                 tile = pygame.draw.rect(screen, tile_color, (tileX - to_shift,
-                                                             tileY - to_shift / 2, tile_width, tile_height))
+                                                             tileY - to_shift // 2, tile_width, tile_height))
 
                 tile_number = 2 ** tile_exponent
                 # if no number, then text is ""]
@@ -170,8 +176,3 @@ class Board:
 
         pygame.display.flip()
         clock.tick(60)
-
-    def test_gui(self):
-        for i in range(self.side):
-            for j in range(self.side):
-                self.board[i][j] = 0

@@ -11,12 +11,9 @@ clock = pygame.time.Clock()
 
 
 board_size = 4
-game_board = board.Board([
-    [1, 1, 0, 1],
-    [2, 1, 0, 0],
-    [2, 1, 0, 0],
-    [2, 1, 0, 0],
-])
+game_board = board.Board()
+game_board.add_tile()
+
 
 def key_to_dir(key):
     if key == 'w':
@@ -26,8 +23,9 @@ def key_to_dir(key):
     if key == 'a':
         return board.Dir.LEFT
     if key == 'd':
-      return board.Dir.RIGHT
+        return board.Dir.RIGHT
     return None
+
 
 running = True
 try:
@@ -35,8 +33,10 @@ try:
         game_board.draw(screen, width, height, clock)
         for event in pygame.event.get():
             if event.type == KEYDOWN:
-                board.shift(key_to_dir(event.unicode))
-                
-                
+                print(key_to_dir(event.unicode))
+                game_board.shift(key_to_dir(event.unicode))
+                game_board.add_tile()
+
+
 finally:
     pygame.quit()
