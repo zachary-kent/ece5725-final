@@ -17,8 +17,8 @@ game_board = board.Board(board_size)
 game_board.test_gui()
 running = True
 try:
-  while running:
-    game_board.draw(screen, width, height)
+    while running:
+        game_board.draw(screen, width, height, clock)
 finally:
 
-  pygame.quit()
+    pygame.quit()
