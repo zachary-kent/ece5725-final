@@ -65,7 +65,7 @@ def shift_row(row):
         shifted_tiles.append(nonzeros[-1])
     # We pad the "empty space" created by merging and shifting tiles with empty tiles
     pad_length = len(row) - len(shifted_tiles)
-    return np.pad(shifted_tiles, (0, pad_length), 'constant')
+    return np.pad(np.array(shifted_tiles, dtype=np.int64), (0, pad_length), 'constant')
 
 # Shifts a matrix left according to the 2048 semantics
 
