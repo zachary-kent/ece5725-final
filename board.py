@@ -75,17 +75,25 @@ def shift(matrix, dir):
 
 
 white = (255, 255, 255)
+black = (0, 0, 0)
 gray = (169, 169, 169)
-light_gray = (211, 211, 211)
-beige = (207, 185, 151)
-light_orange = (255, 213, 128)
-orange = (255, 165, 0)
-light_red = (255, 204, 203)
-red = (255, 0, 0)
-light_yellow = (255, 255, 191)
-# 2, 4, 8, 16, 32, 64, 128
-tile_colors = [gray, light_gray, beige, light_orange,
-               orange, light_red, red, light_yellow]
+tile_empty = (204, 192, 179)
+tile_2 = (238, 228, 218)
+tile_4 = (237, 224, 200)
+tile_8 = (242, 177, 121)
+tile_16 = (245, 149, 99)
+tile_32 = (246, 124, 95)
+tile_64 = (246, 94, 59)
+tile_128 = (237, 207, 114)
+tile_256 = (237, 204, 97)
+tile_512 = (237, 200, 80)
+tile_1024 = (237, 197, 63)
+tile_2048 = (237, 194, 46)
+
+
+tile_colors = [tile_empty, tile_2, tile_4, tile_8, tile_16, tile_32,
+               tile_64, tile_128, tile_256, tile_512, tile_1024, tile_2048]
+
 
 # Represents a 2048 board
 class Board:
@@ -109,29 +117,54 @@ class Board:
     def at(self, i, j):
         return self.board[i][j]
 
-    def draw(self, screen, width, height):
-        font_size = height // self.side // 5
+    def draw(self, screen, width, height, clock):
+        count = 0
+        font_size = height // self.side // 2
         font = pygame.font.Font(None, font_size)
-        tile_size = height // self.side
+        tile_height = height // self.side
+        tile_width = width // self.side
         for i in range(self.side):
             for j in range(self.side):
                 tile_exponent = self.at(i, j)
-                tileX = i / self.side * width
-                tileY = j / self.side * height
-                tile_color = tile_colors[tile_exponent]
-                tile = pygame.draw.rect(screen, tile_color, (tileX - tile_size / 2,
-                                                             tileX + tile_size / 2, tileY - tile_size / 2, tileY + tile_size / 2))
+                to_shift = tile_width / 2
+                tileX = i * tile_width + to_shift
+                tileY = j * tile_height + to_shift / 2
+
+                tile_color = tile_colors[tile_exponent + count]
+                if count < len(tile_colors) - 2:
+                    count = count + 0
+                else:
+                    count = 0
+
+                text_color = white
+                if tile_color == tile_2 or tile_color == tile_4:
+                    text_color = gray
+
+                tile = pygame.draw.rect(screen, tile_color, (tileX - to_shift,
+                                                             tileY - to_shift / 2, tile_width, tile_height))
 
                 tile_number = 2 ** tile_exponent
-                # if no number, then text is ""
+                # if no number, then text is ""]
                 tile_text = font.render(str(tile_number), True,
-                                        white) if tile_number != 1 else ""
+                                        text_color) if tile_number != 1 else font.render("", True,
+                                                                                         text_color)
                 tile_rect = tile_text.get_rect(centerx=tileX, y=tileY)
                 screen.blit(tile_text, tile_rect)
+
+        # draw vertical and horizontal separating lines
+        for i in range(2):
+            for j in range(self.side + 3):
+                if i == 0:  # horizontal
+                    pygame.draw.line(
+                        screen, white, (0, j * tile_height), (width, j * tile_height))
+                else:  # vertical
+                    pygame.draw.line(
+                        screen, white, (j * tile_width, 0), (j * tile_width, height))
+
         pygame.display.flip()
-        
+        clock.tick(60)
 
     def test_gui(self):
         for i in range(self.side):
             for j in range(self.side):
-                self.board[i][j] = 1
+                self.board[i][j] = 0
