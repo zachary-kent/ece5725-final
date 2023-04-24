@@ -18,13 +18,24 @@ game_board = board.Board([
     [2, 1, 0, 0],
 ])
 
+def key_to_dir(key):
+    if key == 'w':
+        return board.Dir.UP
+    if key == 's':
+        return board.Dir.DOWN
+    if key == 'a':
+        return board.Dir.LEFT
+    if key == 'd':
+      return board.Dir.RIGHT
+    return None
+
 running = True
 try:
     while running:
         game_board.draw(screen, width, height, clock)
         for event in pygame.event.get():
             if event.type == KEYDOWN:
-                print(event.key)
+                board.shift(key_to_dir(event.unicode))
                 
                 
 finally:
