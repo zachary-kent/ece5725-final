@@ -22,10 +22,13 @@ class Dir(Enum):
         if self == Dir.RIGHT:
             return 2
 
+
 def create_board(side):
     return np.zeros((side, side), int)
 
 # Filter out the zero elements of a given array, leaving only the nonzero elements
+
+
 def filter_nonzeros(arr):
     nonzeros = []
     for i in arr:
@@ -64,12 +67,16 @@ def shift_row(row):
     return np.pad(shifted_tiles, (0, pad_length), 'constant')
 
 # Shifts a matrix left according to the 2048 semantics
+
+
 def shift_left(matrix):
-    return np.array([ shift_row(row) for row in matrix ])
+    return np.array([shift_row(row) for row in matrix])
 
 # Shifts a matrix in a given direction according to the 2048 semantics
+
+
 def shift(matrix, dir):
-    # Rotate the matrix so we shift left, and then rotate back 
+    # Rotate the matrix so we shift left, and then rotate back
     angle = dir.angle_to_left()
     return np.rot90(shift_left(np.rot90(matrix, angle)), -angle)
 
@@ -108,8 +115,8 @@ class Board:
             self.board = np.array(arg)
 
     def __str__(self):
-        return str(np.array([ [ 0 if i == 0 else 2 ** i for i in row ] for row in self.board ]))
-        
+        return str(np.array([[0 if i == 0 else 2 ** i for i in row] for row in self.board]))
+
     # Shift this 2048 board in place
     def shift(self, dir: Dir):
         self.board = shift(self.board, dir)
@@ -127,8 +134,8 @@ class Board:
             for j in range(self.side):
                 tile_exponent = self.at(i, j)
                 to_shift = tile_width / 2
-                tileX = i * tile_width + to_shift
-                tileY = j * tile_height + to_shift / 2
+                tileX = j * tile_width + to_shift
+                tileY = i * tile_height + to_shift / 2
 
                 tile_color = tile_colors[tile_exponent + count]
                 if count < len(tile_colors) - 2:
