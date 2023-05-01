@@ -137,18 +137,21 @@ class Board:
             j = random.randrange(self.side)
         self.board[i][j] = v
 
+    def get_font(self, height, size_proportion):
+        font_size = height // self.side // size_proportion
+        return pygame.font.Font(None, font_size)
+
     def draw(self, screen, width, height, clock):
-        quit_width = width // 4
-        width = width * 3 // 4
-        height = height * 3 // 4
-        font_size = height // self.side // 2
-        font = pygame.font.Font(None, font_size)
-        tile_height = height // self.side
-        tile_width = width // self.side
+        # font setup
+        font = self.get_font(height, 2)
+
+        tile_height = height // (self.side + 1)
+        tile_width = width // (self.side + 1)
+        to_shift = tile_width // 2
+
         for i in range(self.side):
             for j in range(self.side):
                 tile_exponent = self.at(i, j)
-                to_shift = tile_width // 2
                 tileX = j * tile_width + to_shift
                 tileY = i * tile_height + to_shift // 2
 
@@ -174,10 +177,10 @@ class Board:
             for j in range(self.side + 1):
                 if i == 0:  # horizontal
                     pygame.draw.line(
-                        screen, white, (0, j * tile_height), (width, j * tile_height))
+                        screen, white, (0, j * tile_height), (tile_width * self.side, j * tile_height))
                 else:  # vertical
                     pygame.draw.line(
-                        screen, white, (j * tile_width, 0), (j * tile_width, height))
+                        screen, white, (j * tile_width, 0), (j * tile_width, tile_height * self.side))
 
         pygame.display.flip()
         clock.tick(60)

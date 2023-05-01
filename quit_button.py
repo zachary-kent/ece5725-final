@@ -23,6 +23,7 @@ try:
         for event in pygame.event.get():
             quit_clicked = event.type == MOUSEBUTTONDOWN and quit_rect.collidepoint(
                 event.pos)
+            print(quit_clicked)
         pygame.display.flip()
         clock.tick(60)
 
