@@ -33,9 +33,10 @@ try:
         game_board.draw(screen, width, height, clock)
         for event in pygame.event.get():
             if event.type == KEYDOWN:
-                print(key_to_dir(event.unicode))
-                game_board.shift(key_to_dir(event.unicode))
-                game_board.add_tile()
+                dir = key_to_dir(event.unicode)
+                if dir is not None:
+                    game_board.shift(dir)
+                    game_board.add_tile()
 
 
 finally:
