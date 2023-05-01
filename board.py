@@ -141,8 +141,7 @@ class Board:
         tile_width = width // self.side
         for i in range(self.side):
             for j in range(self.side):
-                # print(self.at(i, j).dtype)
-                tile_exponent = int(self.at(i, j))
+                tile_exponent = self.at(i, j)
                 to_shift = tile_width // 2
                 tileX = j * tile_width + to_shift
                 tileY = i * tile_height + to_shift // 2
