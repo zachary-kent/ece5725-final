@@ -29,15 +29,17 @@ def key_to_dir(key):
 
 running = True
 try:
+    game_status = (False, "")
     while running:
         game_board.draw(screen, width, height, clock)
         for event in pygame.event.get():
             if event.type == KEYDOWN:
                 dir = key_to_dir(event.unicode)
                 if dir is not None:
-                    game_board.shift(dir)
-                    game_board.add_tile()
-
-
+                    if game_board.shift(dir):
+                        game_board.add_tile()
+                        game_status = game_board.end()
+                    running = not game_status[0]
+    print(game_status[1])
 finally:
     pygame.quit()

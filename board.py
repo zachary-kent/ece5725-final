@@ -120,7 +120,10 @@ class Board:
 
     # Shift this 2048 board in place
     def shift(self, dir: Dir):
-        self.board = shift(self.board, dir)
+        if not np.array_equiv(shift(self.board, dir), self.board):
+            self.board = shift(self.board, dir)
+            return True
+        return False
 
     def at(self, i, j):
         return self.board[i][j]
@@ -135,6 +138,9 @@ class Board:
         self.board[i][j] = v
 
     def draw(self, screen, width, height, clock):
+        quit_width = width // 4
+        width = width * 3 // 4
+        height = height * 3 // 4
         font_size = height // self.side // 2
         font = pygame.font.Font(None, font_size)
         tile_height = height // self.side
@@ -165,7 +171,7 @@ class Board:
 
         # draw vertical and horizontal separating lines
         for i in range(2):
-            for j in range(self.side + 3):
+            for j in range(self.side + 1):
                 if i == 0:  # horizontal
                     pygame.draw.line(
                         screen, white, (0, j * tile_height), (width, j * tile_height))
@@ -175,3 +181,21 @@ class Board:
 
         pygame.display.flip()
         clock.tick(60)
+
+    def end(self):
+        # copy self.board into temp_board to not reference self.board when manipulating
+        # check if 2048 tile has been reached
+        if 2048 in self.board:
+            return (True, "Won")
+        temp_board = self.board
+        shift_right = self.shift(Dir.RIGHT)
+        shift_left = self.shift(Dir.LEFT)
+        shift_up = self.shift(Dir.UP)
+        shift_down = self.shift(Dir.DOWN)
+
+        # check if shifting the board in any direction results in no change
+        if shift_down or shift_left or shift_right or shift_up:
+            self.board = temp_board
+            return (False, "")
+        else:
+            return (True, "Lost")
