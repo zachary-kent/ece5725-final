@@ -51,4 +51,4 @@ def all_high_scores(limit=None):
       resp = requests.get(route_url)
    else:
       resp = requests.get(route_url, limit)
-   return resp.json()['scores'] if resp.status_code == requests.codes.ok else [2]
+   return resp.json()['scores'] if resp.status_code == requests.codes.ok else []
