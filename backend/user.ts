@@ -15,7 +15,7 @@ const firestore = getFirestore(app);
 
 type FirestoreUser = {
   password: string
-  highScore: number
+  score: number
 }
 
 const users = firestore.collection('users')
@@ -34,7 +34,7 @@ export const createUser = async ({ username, password }: User) => {
   }
   await userDocRef.set({
     password: await hash(password, 8),
-    highScore: 0,
+    score: 0,
   })
 };
 
@@ -44,18 +44,18 @@ export const highScore = async (username: string): Promise<number> => {
   if (!userDoc.exists) {
     throw new Error('User not found');
   }
-  return userDoc.data().highScore;
+  return userDoc.data().score;
 }
 
-export const highScores = async (max?: number): Promise<Array<{ username: string; highScore: number }>> => {
-  let q = users.orderBy('highScore', 'desc');
+export const highScores = async (max?: number): Promise<Array<{ username: string; score: number }>> => {
+  let q = users.orderBy('score', 'desc');
   if (max != null) {
     q = q.limit(max);
   }
   const { docs } = await q.get();
   return docs.map(doc => {
-    const { highScore } = doc.data() as FirestoreUser;
-    return { username: doc.id, highScore };
+    const { score } = doc.data() as FirestoreUser;
+    return { username: doc.id, score };
   });
 }
 
@@ -63,10 +63,8 @@ export const setHighScore = async (username: string, score: number) => {
   const userDocRef = users.doc(username);
   const userDoc = await userDocRef.get();
   if (!userDoc.exists) throw new Error('User not found');
-  if (userDoc.data().highScore >= score) return;
-  await userDocRef.update({
-    highScore: score
-  });
+  if (userDoc.data().score >= score) return;
+  await userDocRef.update({ score });
 }
 
 export class UserNotFound extends Error {

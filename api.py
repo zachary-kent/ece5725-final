@@ -1,6 +1,6 @@
 import requests
 
-URL = 'https://ece5725.herokuapp.com/'
+URL = 'https://ece5725.herokuapp.com'
 
 # Attempts to create a new user with the specified user name and password
 # Returns whether the creation of the account was successful
@@ -41,3 +41,14 @@ class User:
      resp = requests.post(f'{URL}/high-score', data=data, headers=headers)
      if resp.status_code != requests.codes.ok:
        raise InvalidCredentialsError
+
+# All high scores, associated with the corresponding user, listed in descending order
+# Returns at most limit results, if provided
+# Example result: [{ 'username': 'zak', 'score': 3}, { 'username': 'nadia', 'score': 2}]
+def all_high_scores(limit=None):
+   route_url = f'{URL}/high-score/rankings'
+   if limit is None:
+      resp = requests.get(route_url)
+   else:
+      resp = requests.get(route_url, limit)
+   return resp.json()['scores'] if resp.status_code == requests.codes.ok else [2]

@@ -77,7 +77,7 @@ app.get('/high-score', validateToken, async (req, res) => {
 app.get('/high-score/rankings', async (req, res) => {
   const { limit } = req.body;
   try {
-    const scores = highScores(limit);
+    const scores = await highScores(limit);
     return res.status(200).send({ scores })
   } catch {
     return res.sendStatus(400);
