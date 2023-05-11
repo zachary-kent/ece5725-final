@@ -5,8 +5,8 @@ URL = 'https://ece5725.herokuapp.com'
 # Attempts to create a new user with the specified user name and password
 # Returns whether the creation of the account was successful
 def create_account(username, password):
-    data = { 'username': username, 'password': password }
-    resp = requests.get(f'{URL}/register', data=data)
+    body = { 'username': username, 'password': password }
+    resp = requests.post(f'{URL}/register', json=body)
     return resp.status_code == requests.codes.ok
 
 # An error raised when invalid credentials are entered
@@ -19,8 +19,8 @@ class User:
   # Attempt to login with the provided credentials.
   # Raises `InvalidCredentialsError` if they are invalid
   def __init__(self, username, password):
-    data = { 'username': username, 'password': password }
-    resp = requests.post(f'{URL}/login', data=data)
+    body = { 'username': username, 'password': password }
+    resp = requests.post(f'{URL}/login', json=body)
     if resp.status_code != requests.codes.ok:
        raise InvalidCredentialsError
     self.token = resp.json()['token']
@@ -37,8 +37,8 @@ class User:
   # is less than or equal to their current high score.
   def set_high_score(self, score):
      headers = headers = { 'x-access-token': self.token }
-     data = { 'score': score }
-     resp = requests.post(f'{URL}/high-score', data=data, headers=headers)
+     body = { 'score': score }
+     resp = requests.post(f'{URL}/high-score', json=body, headers=headers)
      if resp.status_code != requests.codes.ok:
        raise InvalidCredentialsError
 
@@ -50,5 +50,6 @@ def all_high_scores(limit=None):
    if limit is None:
       resp = requests.get(route_url)
    else:
-      resp = requests.get(route_url, limit)
+      body = { 'limit': limit }
+      resp = requests.get(route_url, json=body)
    return resp.json()['scores'] if resp.status_code == requests.codes.ok else []
