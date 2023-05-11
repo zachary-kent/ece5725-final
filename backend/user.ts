@@ -5,7 +5,7 @@ import { getFirestore } from 'firebase-admin/firestore'
 import { hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
-const serviceAccount = process.env.SERVICE_ACCOUNT ?? JSON.parse(readFileSync('./serviceAccount.json').toString());
+const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT ?? readFileSync('./serviceAccount.json').toString());
 
 const credential = cert(serviceAccount);
 
