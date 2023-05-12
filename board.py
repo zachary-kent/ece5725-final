@@ -114,16 +114,33 @@ class Board:
             # initialize with matrix
             self.side = len(arg)
             self.board = np.array(arg)
+        self.score = 0
 
     def __str__(self):
         return str(np.array([[0 if i == 0 else 2 ** i for i in row] for row in self.board]))
+    
+    def score_difference(self, board):
+        tiles = list(board.flatten())
+        for tile in self.board.flatten():
+            if tile in tiles:
+                tiles.remove(tile)
+        score = 0
+        for tile in tiles:
+            if tile != 0:
+                score += 1 << tile
+        return score
 
     # Shift this 2048 board in place
     def shift(self, dir: Dir):
-        if not np.array_equiv(shift(self.board, dir), self.board):
-            self.board = shift(self.board, dir)
+        shifted = shift(self.board, dir)
+        if not np.array_equiv(shifted, self.board):
+            self.score += self.score_difference(shifted)
+            self.board = shifted
             return True
         return False
+    
+    def can_shift(self, dir):
+        return not np.array_equal(self.board, shift(self.board, dir))
 
     def at(self, i, j):
         return self.board[i][j]
@@ -186,19 +203,12 @@ class Board:
         clock.tick(60)
 
     def end(self):
-        # copy self.board into temp_board to not reference self.board when manipulating
         # check if 2048 tile has been reached
         if 2048 in self.board:
             return (True, "Won")
-        temp_board = self.board
-        shift_right = self.shift(Dir.RIGHT)
-        shift_left = self.shift(Dir.LEFT)
-        shift_up = self.shift(Dir.UP)
-        shift_down = self.shift(Dir.DOWN)
 
         # check if shifting the board in any direction results in no change
-        if shift_down or shift_left or shift_right or shift_up:
-            self.board = temp_board
+        if self.can_shift(Dir.UP) or self.can_shift(Dir.DOWN) or self.can_shift(Dir.LEFT) or self.can_shift(Dir.RIGHT):
             return (False, "")
         else:
             return (True, "Lost")

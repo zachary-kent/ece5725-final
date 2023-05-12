@@ -74,6 +74,7 @@ try:
                     dir = key_to_dir(event.unicode)
                     if dir is not None:
                         if game_board.shift(dir):
+                            print(game_board.score)
                             game_board.add_tile()
                             game_status = game_board.end()
                         running = not game_status[0]
