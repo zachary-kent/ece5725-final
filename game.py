@@ -2,12 +2,15 @@ import time
 import pygame
 from pygame.locals import *
 import board
+import login_page
 
 pygame.init()
 
 # size = width, height = 320, 240
 size = width, height = 500, 300
 white = (255, 255, 255)
+black = (0, 0, 0)
+gray = (169, 169, 169)
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 
@@ -21,21 +24,8 @@ tile_height = height // (game_board.side + 1)
 tile_width = width // (game_board.side + 1)
 to_shift = tile_width // 2
 
-
-def createAccount():
-    return [True, "Success"]
-
-
-# login / create account screen
-login_text = text_font.render("Login", True, white)
-login_rect = login_text.get_rect(centerx=width // 2, y=height // 4)
-create_text = text_font.render("Create Account", True, white)
-create_rect = create_text.get_rect(centerx=width // 2, y=height // 2)
-success_text = text_font.render(createAccount()[1], True, white)
-success_rect = success_text.get_rect(centerx=width // 2, y=(height * (3 // 4)))
-
-login_clicked = False
-create_clicked = createAccount()[0]
+login = login_page.Login(width, height, text_font, {
+                         "white": white, "black": black, "gray": gray})
 
 # text buttons
 text_buttons = ["Score", "New Game", "Quit"]
@@ -63,27 +53,14 @@ def key_to_dir(key):
 
 quit_clicked = False
 running = True
+login_screen = True
+game_screen = False
 try:
     game_status = (False, "")
     while running and not quit_clicked:
-        if not create_clicked:
-            screen.blit(login_text, login_rect)
-            screen.blit(create_text, create_rect)
-            for event in pygame.event.get():
-                if event.type == MOUSEBUTTONDOWN:
-                    create_clicked = create_rect.collidepoint(event.pos)
-            if create_clicked:
-                screen.blit(success_text, success_rect)
-            pygame.display.flip()
-            clock.tick(60)
-        elif not login_clicked:
-            screen.blit(login_text, login_rect)
-            screen.blit(create_text, create_rect)
-            for event in pygame.event.get():
-                if event.type == MOUSEBUTTONDOWN:
-                    login_clicked = login_rect.collidepoint(event.pos)
-            pygame.display.flip()
-            clock.tick(60)
+        if login_screen:
+            login.draw(screen, clock)
+            login_screen = not login.handle_events()
         else:
             screen.blit(text_buttons_dict["Quit"]
                         [0], text_buttons_dict["Quit"][1])
