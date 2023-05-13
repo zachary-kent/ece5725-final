@@ -36,7 +36,7 @@ class User:
   # Sets the high score of this user. Does nothing if the provided score
   # is less than or equal to their current high score.
   def set_high_score(self, score):
-     headers = headers = { 'x-access-token': self.token }
+     headers = { 'x-access-token': self.token }
      body = { 'score': score }
      resp = requests.post(f'{URL}/high-score', json=body, headers=headers)
      if resp.status_code != requests.codes.ok:
