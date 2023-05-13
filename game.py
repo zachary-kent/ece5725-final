@@ -58,6 +58,7 @@ game_screen = False
 try:
     game_status = (False, "")
     while running and not quit_clicked:
+        screen.fill(black)
         if login_screen:
             login.draw(screen, clock)
             login_screen = not login.handle_events()
@@ -77,6 +78,12 @@ try:
                             print(game_board.score)
                             game_board.add_tile()
                             game_status = game_board.end()
+                            score_text = text_font.render(
+                                "Score: " + str(game_board.score), True, white)
+                            score_rect = score_text.get_rect(centerx=width - tile_width +
+                                                             to_shift, y=to_shift // 2)
+                            text_buttons_dict["Score"] = (
+                                score_text, score_rect)
                         running = not game_status[0]
                 if event.type == MOUSEBUTTONDOWN:
                     quit_clicked = text_buttons_dict["Quit"][1].collidepoint(
