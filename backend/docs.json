@@ -1,0 +1,50 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "2048",
+    "description": "Access users' 2048 high scores"
+  },
+  "servers": {
+    "url": "https://ece5725.herokuapp.com"
+  },
+  "paths": {
+    "/register": {
+      "post": {
+        "description": "Create a new account",
+        "responses": {
+          "200": {
+            "description": "Account successfully created"
+          },
+          "400": {
+            "description": "User already exists"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "description": "Login to receive an access token",
+        "responses": {
+          "200": {
+            "description": "Successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "token"
+                  ],
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+        }
+      }
+    }
+  }
+}
