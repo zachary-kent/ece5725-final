@@ -2,6 +2,7 @@ import time
 import pygame
 from pygame.locals import *
 import board
+import api
 
 pygame.init()
 
@@ -13,6 +14,7 @@ class Login:
         self.username_clicked = False
         self.password_clicked = False
         self.create_success = False
+        self.login_failed = False
 
         # login / create account screen
         self.width = width
@@ -43,6 +45,12 @@ class Login:
         self.success_rect = self.success_text.get_rect(
             centerx=width // 2, y=(height * 5 // 6))
 
+        # failed login
+        self.login_failed_text = font.render(
+            "Incorrect username or password", True, colors["white"])
+        self.login_failed_rect = self.login_failed_text.get_rect(
+            centerx=width // 2, y=(height * 5 // 6))
+
     def draw(self, screen, clock):
         # username text box
         username_box_color = self.colors["gray"] if not self.username_clicked else self.colors["white"]
@@ -71,10 +79,14 @@ class Login:
         # if success at creating account, display 'success' message
         if self.create_success:
             screen.blit(self.success_text, self.success_rect)
+        elif self.login_failed:
+            screen.blit(self.login_failed_text,
+                        self.login_failed_rect)
+
         pygame.display.flip()
         clock.tick(60)
 
-    def handle_events(self):
+    def handle_events(self, screen, clock):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.username_clicked = self.username_rect.collidepoint(
@@ -83,10 +95,18 @@ class Login:
                     event.pos)
                 self.login_clicked = self.login_rect.collidepoint(event.pos)
                 if self.login_clicked:
-                    return self.login()
+                    try:
+                        user = api.User(self.username_text, self.password_text)
+                        self.login_success = True
+                        return False
+                    except api.InvalidCredentialsError:
+                        self.login_clicked = False
+                        self.login_failed = True
+                        return True
                 self.create_clicked = self.create_rect.collidepoint(event.pos)
                 if self.create_clicked:
-                    self.create_success = self.createAccount()
+                    self.create_success = api.create_account(
+                        self.username_text, self.password_text)
 
             if event.type == pygame.KEYDOWN:
 
@@ -106,6 +126,8 @@ class Login:
                         self.username_text += event.unicode
                     elif self.password_clicked:
                         self.password_text += event.unicode
+
+        return True
 
     def login(self):
         self.create_success = False

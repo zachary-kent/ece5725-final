@@ -55,13 +55,15 @@ quit_clicked = False
 running = True
 login_screen = True
 game_screen = False
+user = None
 try:
     game_status = (False, "")
     while running and not quit_clicked:
         screen.fill(black)
+        print(login_screen)
         if login_screen:
             login.draw(screen, clock)
-            login_screen = not login.handle_events()
+            login_screen = login.handle_events(screen, clock)
         else:
             screen.blit(text_buttons_dict["Quit"]
                         [0], text_buttons_dict["Quit"][1])
@@ -91,6 +93,12 @@ try:
                     new_game_clicked = text_buttons_dict["New Game"][1].collidepoint(
                         event.pos)
                     if new_game_clicked:
+                        score_text = text_font.render(
+                            "Score: 0", True, white)
+                        score_rect = score_text.get_rect(centerx=width - tile_width +
+                                                         to_shift, y=to_shift // 2)
+                        text_buttons_dict["Score"] = (
+                            score_text, score_rect)
                         game_board = board.Board()
                         game_board.add_tile()
 
