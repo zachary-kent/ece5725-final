@@ -31,7 +31,7 @@ login = login_page.Login(width, height, text_font, {
 leaderboard = leaderboard_page.Leaderboard(width, height, text_font, white)
 
 # text buttons
-text_buttons = ["Score", "New Game", "Quit", "Top Scores"]
+text_buttons = ["Score", "New Game", "Quit", "Top Scores", "Logout"]
 text_buttons_dict = []
 for i in range(len(text_buttons)):
     text = text_font.render(text_buttons[i], True, white)
@@ -57,9 +57,9 @@ def key_to_dir(key):
 quit_clicked = False
 running = True
 login_screen = True
-game_screen = False
 user = None
 topscores_clicked = False
+logout_clicked = False
 try:
     game_status = (False, "")
     while running and not quit_clicked:
@@ -68,6 +68,12 @@ try:
             login.draw(screen)
             user = login.handle_events()
             login_screen = user is None
+        elif logout_clicked:
+            logout_clicked = False
+            login_screen = True
+            user = None
+            game_board = board.Board()
+            game_board.add_tile()
         elif topscores_clicked:
             leaderboard.draw(screen, clock, width, height, text_font, white)
             topscores_clicked = not leaderboard.handle_events()
@@ -93,6 +99,8 @@ try:
                     new_game_clicked = text_buttons_dict["New Game"][1].collidepoint(
                         event.pos)
                     topscores_clicked = text_buttons_dict["Top Scores"][1].collidepoint(
+                        event.pos)
+                    logout_clicked = text_buttons_dict["Logout"][1].collidepoint(
                         event.pos)
                     if new_game_clicked:
                         score_text = text_font.render(
