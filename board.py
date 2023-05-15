@@ -208,7 +208,7 @@ class Board:
 
     def end(self):
         # check if 2048 tile has been reached
-        if 2048 in self.board:
+        if 11 in self.board:
             return (True, "YOU WON!!")
 
         # check if shifting the board in any direction results in no change
