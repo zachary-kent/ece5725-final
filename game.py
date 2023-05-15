@@ -53,22 +53,24 @@ def button_to_dir(button):
 board_size = 4
 game_board = board.Board()
 game_board.add_tile()
-text_font = game_board.get_font(height, 3)
+login_text_font = game_board.get_font(height, 2)
+playing_text_font = game_board.get_font(height, 5)
 
 tile_height = height // (game_board.side + 1)
 tile_width = width // (game_board.side + 1)
 to_shift = tile_width // 2
 
-login = login_page.Login(width, height, text_font, {
+login = login_page.Login(width, height, login_text_font, {
                          "white": white, "black": black, "gray": gray})
 
-leaderboard = leaderboard_page.Leaderboard(width, height, text_font, white, 7)
+leaderboard = leaderboard_page.Leaderboard(
+    width, height, playing_text_font, white, 7)
 
 # text buttons
 text_buttons = ["Score: 0", "New Game", "Quit", "Scores", "Logout"]
 text_buttons_dict = []
 for i in range(len(text_buttons)):
-    text = text_font.render(text_buttons[i], True, white)
+    text = playing_text_font.render(text_buttons[i], True, white)
     rect = text.get_rect(centerx=width - tile_width +
                          to_shift, y=i * tile_height + to_shift // 2)
     text_buttons_dict.append((text_buttons[i], (text, rect)))
@@ -105,11 +107,13 @@ try:
         elif logout_clicked:
             logout_clicked = False
             login_screen = True
+            user.set_high_score(game_board.score)
             user = None
             game_board = board.Board()
             game_board.add_tile()
         elif topscores_clicked:
-            leaderboard.draw(screen, clock, width, height, text_font, white)
+            leaderboard.draw(screen, clock, width, height,
+                             playing_text_font, white)
             topscores_clicked = not leaderboard.handle_events()
         else:
             dir = None
@@ -134,7 +138,7 @@ try:
                     logout_clicked = text_buttons_dict["Logout"][1].collidepoint(
                         event.pos)
                     if new_game_clicked:
-                        score_text = text_font.render(
+                        score_text = playing_text_font.render(
                             "Score: 0", True, white)
                         score_rect = score_text.get_rect(centerx=width - tile_width +
                                                          to_shift, y=to_shift // 2)
@@ -145,7 +149,7 @@ try:
             if dir is not None:
                 if game_board.shift(dir):
                     game_board.add_tile()
-                    score_text = text_font.render(
+                    score_text = playing_text_font.render(
                         "Score: " + str(game_board.score), True, white)
                     score_rect = score_text.get_rect(centerx=width - tile_width +
                                                      to_shift, y=to_shift // 2)
@@ -153,6 +157,8 @@ try:
                         score_text, score_rect)
         pygame.display.flip()
         clock.tick(60)
+        if user is not None:
+            user.set_high_score(game_board.score)
 finally:
     pygame.quit()
     GPIO.cleanup()
