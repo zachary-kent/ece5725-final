@@ -53,7 +53,7 @@ def button_to_dir(button):
 board_size = 4
 game_board = board.Board()
 game_board.add_tile()
-text_font = game_board.get_font(height, 4)
+text_font = game_board.get_font(height, 3)
 
 tile_height = height // (game_board.side + 1)
 tile_width = width // (game_board.side + 1)
@@ -65,7 +65,7 @@ login = login_page.Login(width, height, text_font, {
 leaderboard = leaderboard_page.Leaderboard(width, height, text_font, white, 7)
 
 # text buttons
-text_buttons = ["Score: 0", "New Game", "Quit", "Top Scores", "Logout"]
+text_buttons = ["Score: 0", "New Game", "Quit", "Scores", "Logout"]
 text_buttons_dict = []
 for i in range(len(text_buttons)):
     text = text_font.render(text_buttons[i], True, white)
@@ -129,7 +129,7 @@ try:
                         event.pos)
                     new_game_clicked = text_buttons_dict["New Game"][1].collidepoint(
                         event.pos)
-                    topscores_clicked = text_buttons_dict["Top Scores"][1].collidepoint(
+                    topscores_clicked = text_buttons_dict["Scores"][1].collidepoint(
                         event.pos)
                     logout_clicked = text_buttons_dict["Logout"][1].collidepoint(
                         event.pos)
