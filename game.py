@@ -24,7 +24,7 @@ clock = pygame.time.Clock()
 BUTTONS = [22, 27, 17, 23]
 
 
-TFT = False
+TFT = True
 
 if TFT:
     GPIO.setmode(GPIO.BCM)   # Set for GPIO (bcm) numbering not pin numbers...
