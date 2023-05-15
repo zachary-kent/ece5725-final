@@ -209,10 +209,10 @@ class Board:
     def end(self):
         # check if 2048 tile has been reached
         if 2048 in self.board:
-            return (True, "YOU WON :)")
+            return (True, "YOU WON!!")
 
         # check if shifting the board in any direction results in no change
         if self.can_shift(Dir.UP) or self.can_shift(Dir.DOWN) or self.can_shift(Dir.LEFT) or self.can_shift(Dir.RIGHT):
             return (False, "")
         else:
-            return (True, "WA Wa wa... You Lost :(")
+            return (True, "You Lost")

@@ -3,6 +3,7 @@ import pygame
 from pygame.locals import *
 import board
 import login_page
+import leaderboard_page
 
 pygame.init()
 
@@ -27,8 +28,10 @@ to_shift = tile_width // 2
 login = login_page.Login(width, height, text_font, {
                          "white": white, "black": black, "gray": gray})
 
+leaderboard = leaderboard_page.Leaderboard(width, height, text_font, white)
+
 # text buttons
-text_buttons = ["Score", "New Game", "Quit", "Leaderboard"]
+text_buttons = ["Score", "New Game", "Quit", "Top Scores"]
 text_buttons_dict = []
 for i in range(len(text_buttons)):
     text = text_font.render(text_buttons[i], True, white)
@@ -56,6 +59,7 @@ running = True
 login_screen = True
 game_screen = False
 user = None
+topscores_clicked = False
 try:
     game_status = (False, "")
     while running and not quit_clicked:
@@ -64,6 +68,9 @@ try:
             login.draw(screen)
             user = login.handle_events()
             login_screen = user is None
+        elif topscores_clicked:
+            leaderboard.draw(screen, clock, width, height, text_font, white)
+            topscores_clicked = leaderboard.handle_events()
         else:
             screen.blit(text_buttons_dict["Quit"]
                         [0], text_buttons_dict["Quit"][1])
@@ -72,6 +79,8 @@ try:
             screen.blit(text_buttons_dict["New Game"]
                         [0], text_buttons_dict["New Game"][1])
             game_board.draw(screen, width, height)
+            screen.blit(text_buttons_dict["Top Scores"]
+                        [0], text_buttons_dict["Top Scores"][1])
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
                     dir = key_to_dir(event.unicode)
@@ -88,6 +97,8 @@ try:
                     quit_clicked = text_buttons_dict["Quit"][1].collidepoint(
                         event.pos)
                     new_game_clicked = text_buttons_dict["New Game"][1].collidepoint(
+                        event.pos)
+                    topscores_clicked = text_buttons_dict["Top Scores"][1].collidepoint(
                         event.pos)
                     if new_game_clicked:
                         score_text = text_font.render(
