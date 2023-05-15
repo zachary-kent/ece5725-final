@@ -70,7 +70,7 @@ try:
             login_screen = user is None
         elif topscores_clicked:
             leaderboard.draw(screen, clock, width, height, text_font, white)
-            topscores_clicked = leaderboard.handle_events()
+            topscores_clicked = not leaderboard.handle_events()
         else:
             screen.blit(text_buttons_dict["Quit"]
                         [0], text_buttons_dict["Quit"][1])
@@ -78,9 +78,9 @@ try:
                         text_buttons_dict["Score"][1])
             screen.blit(text_buttons_dict["New Game"]
                         [0], text_buttons_dict["New Game"][1])
-            game_board.draw(screen, width, height)
             screen.blit(text_buttons_dict["Top Scores"]
                         [0], text_buttons_dict["Top Scores"][1])
+            game_board.draw(screen, width, height)
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
                     dir = key_to_dir(event.unicode)

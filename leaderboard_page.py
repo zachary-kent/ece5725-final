@@ -11,13 +11,14 @@ class Leaderboard:
     def __init__(self, width, height, font, font_color):
         self.back_clicked = False
         self.back_text = font.render("Back", True, font_color)
-        self.back_rect = self.back_text.get_rect(centerx=width // 2, y=height)
+        self.back_rect = self.back_text.get_rect(
+            centerx=width // 2, y=height - 20)
 
     def handle_events(self):
         for event in pygame.event.get():
-            self.back_clicked = self.back_rect.collidepoint(event.pos)
-        # return self.back_clicked
-        return False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.back_clicked = self.back_rect.collidepoint(event.pos)
+        return self.back_clicked
 
     def draw(self, screen, clock, width, height, font, font_color):
         limit = 10
@@ -34,5 +35,6 @@ class Leaderboard:
                 centerx=width * 3 // 4, y=height * i // limit + limit)
             screen.blit(username_text, username_rect)
             screen.blit(score_text, score_rect)
+            i = i + 1
 
         screen.blit(self.back_text, self.back_rect)
