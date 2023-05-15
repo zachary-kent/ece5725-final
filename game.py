@@ -28,10 +28,10 @@ to_shift = tile_width // 2
 login = login_page.Login(width, height, text_font, {
                          "white": white, "black": black, "gray": gray})
 
-leaderboard = leaderboard_page.Leaderboard(width, height, text_font, white)
+leaderboard = leaderboard_page.Leaderboard(width, height, text_font, white, 10)
 
 # text buttons
-text_buttons = ["Score", "New Game", "Quit", "Top Scores"]
+text_buttons = ["Score: 0", "New Game", "Quit", "Top Scores"]
 text_buttons_dict = []
 for i in range(len(text_buttons)):
     text = text_font.render(text_buttons[i], True, white)
@@ -74,8 +74,8 @@ try:
         else:
             screen.blit(text_buttons_dict["Quit"]
                         [0], text_buttons_dict["Quit"][1])
-            screen.blit(text_buttons_dict["Score"][0],
-                        text_buttons_dict["Score"][1])
+            screen.blit(text_buttons_dict["Score: 0"][0],
+                        text_buttons_dict["Score: 0"][1])
             screen.blit(text_buttons_dict["New Game"]
                         [0], text_buttons_dict["New Game"][1])
             screen.blit(text_buttons_dict["Top Scores"]
@@ -91,7 +91,7 @@ try:
                                 "Score: " + str(game_board.score), True, white)
                             score_rect = score_text.get_rect(centerx=width - tile_width +
                                                              to_shift, y=to_shift // 2)
-                            text_buttons_dict["Score"] = (
+                            text_buttons_dict["Score: 0"] = (
                                 score_text, score_rect)
                 if event.type == MOUSEBUTTONDOWN:
                     quit_clicked = text_buttons_dict["Quit"][1].collidepoint(
