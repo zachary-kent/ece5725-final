@@ -31,11 +31,11 @@ if TFT:
     GPIO.setmode(GPIO.BCM)   # Set for GPIO (bcm) numbering not pin numbers...
     for button in BUTTONS:
         GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    os.putenv('SDL_VIDEODRIVER', 'fbcon')  # Display on piTFT
-    os.putenv('SDL_MOUSEDRV', 'TSLIB')     # Track mouse clicks on piTFT
-    os.putenv('SDL_MOUSEDEV', '/dev/input/touchscreen')
+    # os.putenv('SDL_VIDEODRIVER', 'fbcon')  # Display on piTFT
+    # os.putenv('SDL_MOUSEDRV', 'TSLIB')     # Track mouse clicks on piTFT
+    # os.putenv('SDL_MOUSEDEV', '/dev/input/touchscreen')
 
-pygame.mouse.set_visible(not TFT)
+# pygame.mouse.set_visible(not TFT)
 
 
 def button_to_dir(button):
