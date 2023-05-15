@@ -27,15 +27,15 @@ class Leaderboard:
         for place in all_scores:
             place_text = font.render(str(i + 1), True, font_color)
             place_rect = place_text.get_rect(
-                centerx=width//8, y=(height * i // self.limit + self.limit))
+                centerx=width//8, y=((height - (height // self.limit)) * i // self.limit + self.limit))
             screen.blit(place_text, place_rect)
             username_text = font.render(
                 place["username"], True, font_color)
             username_rect = username_text.get_rect(
-                centerx=width // 4, y=(height * i // self.limit + self.limit))
+                centerx=width // 4, y=((height - (height // self.limit)) * i // self.limit + self.limit))
             score_text = font.render(str(place["score"]), True, font_color)
             score_rect = score_text.get_rect(
-                centerx=width * 3 // 4, y=height * i // self.limit + self.limit)
+                centerx=width * 3 // 4, y=(height - (height // self.limit)) * i // self.limit + self.limit)
             screen.blit(username_text, username_rect)
             screen.blit(score_text, score_rect)
             i = i + 1

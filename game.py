@@ -4,6 +4,12 @@ from pygame.locals import *
 import board
 import login_page
 import leaderboard_page
+import sys
+
+try:
+    import RPi.GPIO as GPIO
+except ImportError:
+    pass
 
 pygame.init()
 
@@ -14,6 +20,28 @@ black = (0, 0, 0)
 gray = (169, 169, 169)
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
+
+BUTTONS = [22, 27, 17, 23]
+
+
+TFT = False
+
+if TFT:
+    GPIO.setmode(GPIO.BCM)   # Set for GPIO (bcm) numbering not pin numbers...
+    for button in BUTTONS:
+        GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+
+def button_to_dir(button):
+    if button == 17:
+        return board.Dir.UP
+    if button == 22:
+        return board.Dir.DOWN
+    if button == 23:
+        return board.Dir.LEFT
+    if button == 27:
+        return board.Dir.RIGHT
+    return None
 
 
 board_size = 4
@@ -28,7 +56,7 @@ to_shift = tile_width // 2
 login = login_page.Login(width, height, text_font, {
                          "white": white, "black": black, "gray": gray})
 
-leaderboard = leaderboard_page.Leaderboard(width, height, text_font, white, 10)
+leaderboard = leaderboard_page.Leaderboard(width, height, text_font, white, 7)
 
 # text buttons
 text_buttons = ["Score: 0", "New Game", "Quit", "Top Scores", "Logout"]
@@ -78,21 +106,18 @@ try:
             leaderboard.draw(screen, clock, width, height, text_font, white)
             topscores_clicked = not leaderboard.handle_events()
         else:
+            dir = None
+            if TFT:
+                for button in BUTTONS:
+                    if not GPIO.input(button):
+                        dir = button_to_dir(button)
             for text, rect in text_buttons_dict.values():
                 screen.blit(text, rect)
             game_board.draw(screen, width, height)
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
                     dir = key_to_dir(event.unicode)
-                    if dir is not None:
-                        if game_board.shift(dir):
-                            game_board.add_tile()
-                            score_text = text_font.render(
-                                "Score: " + str(game_board.score), True, white)
-                            score_rect = score_text.get_rect(centerx=width - tile_width +
-                                                             to_shift, y=to_shift // 2)
-                            text_buttons_dict["Score: 0"] = (
-                                score_text, score_rect)
+
                 if event.type == MOUSEBUTTONDOWN:
                     quit_clicked = text_buttons_dict["Quit"][1].collidepoint(
                         event.pos)
@@ -111,7 +136,17 @@ try:
                             score_text, score_rect)
                         game_board = board.Board()
                         game_board.add_tile()
+            if dir is not None:
+                if game_board.shift(dir):
+                    game_board.add_tile()
+                    score_text = text_font.render(
+                        "Score: " + str(game_board.score), True, white)
+                    score_rect = score_text.get_rect(centerx=width - tile_width +
+                                                     to_shift, y=to_shift // 2)
+                    text_buttons_dict["Score: 0"] = (
+                        score_text, score_rect)
         pygame.display.flip()
         clock.tick(60)
 finally:
     pygame.quit()
+    GPIO.cleanup()
