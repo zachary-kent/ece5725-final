@@ -13,8 +13,8 @@ except ImportError:
 
 pygame.init()
 
-# size = width, height = 320, 240
-size = width, height = 500, 300
+size = width, height = 320, 240
+#size = width, height = 500, 300
 white = (255, 255, 255)
 black = (0, 0, 0)
 gray = (169, 169, 169)
