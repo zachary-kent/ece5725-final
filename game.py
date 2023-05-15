@@ -25,7 +25,7 @@ clock = pygame.time.Clock()
 BUTTONS = [22, 27, 17, 23]
 
 
-TFT = True
+TFT = False
 
 if TFT:
     GPIO.setmode(GPIO.BCM)   # Set for GPIO (bcm) numbering not pin numbers...
@@ -54,7 +54,7 @@ board_size = 4
 game_board = board.Board()
 game_board.add_tile()
 login_text_font = game_board.get_font(height, 2)
-playing_text_font = game_board.get_font(height, 5)
+playing_text_font = game_board.get_font(height, 4)
 
 tile_height = height // (game_board.side + 1)
 tile_width = width // (game_board.side + 1)
@@ -64,7 +64,7 @@ login = login_page.Login(width, height, login_text_font, {
                          "white": white, "black": black, "gray": gray})
 
 leaderboard = leaderboard_page.Leaderboard(
-    width, height, playing_text_font, white, 7)
+    width, height, login_text_font, white, 7)
 
 # text buttons
 text_buttons = ["Score: 0", "New Game", "Quit", "Scores", "Logout"]
@@ -107,7 +107,7 @@ try:
         elif logout_clicked:
             logout_clicked = False
             login_screen = True
-            user.set_high_score(game_board.score)
+            user.set_high_score(int(game_board.score))
             user = None
             game_board = board.Board()
             game_board.add_tile()
@@ -157,8 +157,8 @@ try:
                         score_text, score_rect)
         pygame.display.flip()
         clock.tick(60)
-        if user is not None:
-            user.set_high_score(game_board.score)
+    if user is not None:
+        user.set_high_score(int(game_board.score))
 finally:
     pygame.quit()
     GPIO.cleanup()
