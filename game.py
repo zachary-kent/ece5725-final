@@ -100,6 +100,7 @@ try:
                         event.pos)
                     topscores_clicked = text_buttons_dict["Top Scores"][1].collidepoint(
                         event.pos)
+                    print(topscores_clicked)
                     if new_game_clicked:
                         score_text = text_font.render(
                             "Score: 0", True, white)

@@ -9,16 +9,16 @@ pygame.init()
 
 class Leaderboard:
     def __init__(self, width, height, font, font_color):
-        self.back_clicked = False
         self.back_text = font.render("Back", True, font_color)
         self.back_rect = self.back_text.get_rect(
             centerx=width // 2, y=height - 20)
 
     def handle_events(self):
+        back_clicked = False
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                self.back_clicked = self.back_rect.collidepoint(event.pos)
-        return self.back_clicked
+                back_clicked = self.back_rect.collidepoint(event.pos)
+        return back_clicked
 
     def draw(self, screen, clock, width, height, font, font_color):
         limit = 10
