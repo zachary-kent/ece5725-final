@@ -95,11 +95,11 @@ class Login:
                     try:
                         user = api.User(self.username_text, self.password_text)
                         self.login_success = True
-                        return False
+                        return user
                     except api.InvalidCredentialsError:
                         self.login_clicked = False
                         self.login_failed = True
-                        return True
+                        return None
                 self.create_clicked = self.create_rect.collidepoint(event.pos)
                 if self.create_clicked:
                     self.create_success = api.create_account(
@@ -124,11 +124,4 @@ class Login:
                     elif self.password_clicked:
                         self.password_text += event.unicode
 
-        return True
-
-    def login(self):
-        self.create_success = False
-        return True
-
-    def createAccount(self):
-        return True
+        return None

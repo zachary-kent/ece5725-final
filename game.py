@@ -62,7 +62,8 @@ try:
         screen.fill(black)
         if login_screen:
             login.draw(screen)
-            login_screen = login.handle_events()
+            user = login.handle_events()
+            login_screen = user is None
         else:
             screen.blit(text_buttons_dict["Quit"]
                         [0], text_buttons_dict["Quit"][1])
