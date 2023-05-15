@@ -5,6 +5,7 @@ import board
 import login_page
 import leaderboard_page
 import sys
+import os
 
 try:
     import RPi.GPIO as GPIO
@@ -30,6 +31,8 @@ if TFT:
     GPIO.setmode(GPIO.BCM)   # Set for GPIO (bcm) numbering not pin numbers...
     for button in BUTTONS:
         GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    os.putenv('SDL_MOUSEDRV', 'TSLIB')     # Track mouse clicks on piTFT
+    os.putenv('SDL_MOUSEDEV', '/dev/input/touchscreen')
 
 
 def button_to_dir(button):
