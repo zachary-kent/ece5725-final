@@ -28,7 +28,7 @@ login = login_page.Login(width, height, text_font, {
                          "white": white, "black": black, "gray": gray})
 
 # text buttons
-text_buttons = ["Score", "New Game", "Quit"]
+text_buttons = ["Score", "New Game", "Quit", "Leaderboard"]
 text_buttons_dict = []
 for i in range(len(text_buttons)):
     text = text_font.render(text_buttons[i], True, white)
@@ -60,7 +60,6 @@ try:
     game_status = (False, "")
     while running and not quit_clicked:
         screen.fill(black)
-        print(login_screen)
         if login_screen:
             login.draw(screen)
             login_screen = login.handle_events()
@@ -77,16 +76,13 @@ try:
                     dir = key_to_dir(event.unicode)
                     if dir is not None:
                         if game_board.shift(dir):
-                            print(game_board.score)
                             game_board.add_tile()
-                            game_status = game_board.end()
                             score_text = text_font.render(
                                 "Score: " + str(game_board.score), True, white)
                             score_rect = score_text.get_rect(centerx=width - tile_width +
                                                              to_shift, y=to_shift // 2)
                             text_buttons_dict["Score"] = (
                                 score_text, score_rect)
-                        running = not game_status[0]
                 if event.type == MOUSEBUTTONDOWN:
                     quit_clicked = text_buttons_dict["Quit"][1].collidepoint(
                         event.pos)
@@ -103,6 +99,5 @@ try:
                         game_board.add_tile()
         pygame.display.flip()
         clock.tick(60)
-    print(game_status[1])
 finally:
     pygame.quit()

@@ -118,7 +118,7 @@ class Board:
 
     def __str__(self):
         return str(np.array([[0 if i == 0 else 2 ** i for i in row] for row in self.board]))
-    
+
     def score_difference(self, board):
         tiles = list(board.flatten())
         for tile in self.board.flatten():
@@ -138,7 +138,7 @@ class Board:
             self.board = shifted
             return True
         return False
-    
+
     def can_shift(self, dir):
         return not np.array_equal(self.board, shift(self.board, dir))
 
@@ -189,6 +189,13 @@ class Board:
                 tile_rect = tile_text.get_rect(centerx=tileX, y=tileY)
                 screen.blit(tile_text, tile_rect)
 
+        game_status = self.end()
+        if game_status[0]:
+            status_text = font.render(game_status[1], True, text_color)
+            status_rect = status_text.get_rect(
+                centerx=width // 2, y=height - to_shift)
+            screen.blit(status_text, status_rect)
+
         # draw vertical and horizontal separating lines
         for i in range(2):
             for j in range(self.side + 1):
@@ -202,10 +209,10 @@ class Board:
     def end(self):
         # check if 2048 tile has been reached
         if 2048 in self.board:
-            return (True, "Won")
+            return (True, "YOU WON :)")
 
         # check if shifting the board in any direction results in no change
         if self.can_shift(Dir.UP) or self.can_shift(Dir.DOWN) or self.can_shift(Dir.LEFT) or self.can_shift(Dir.RIGHT):
             return (False, "")
         else:
-            return (True, "Lost")
+            return (True, "WA Wa wa... You Lost :(")
