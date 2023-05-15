@@ -53,7 +53,7 @@ def button_to_dir(button):
 board_size = 4
 game_board = board.Board()
 game_board.add_tile()
-text_font = game_board.get_font(height, 5)
+text_font = game_board.get_font(height, 4)
 
 tile_height = height // (game_board.side + 1)
 tile_width = width // (game_board.side + 1)
