@@ -158,7 +158,7 @@ class Board:
         font_size = height // self.side // size_proportion
         return pygame.font.Font(None, font_size)
 
-    def draw(self, screen, width, height, clock):
+    def draw(self, screen, width, height):
         # font setup
         font = self.get_font(height, 2)
 
@@ -198,9 +198,6 @@ class Board:
                 else:  # vertical
                     pygame.draw.line(
                         screen, white, (j * tile_width, 0), (j * tile_width, tile_height * self.side))
-
-        pygame.display.flip()
-        clock.tick(60)
 
     def end(self):
         # check if 2048 tile has been reached

@@ -62,8 +62,8 @@ try:
         screen.fill(black)
         print(login_screen)
         if login_screen:
-            login.draw(screen, clock)
-            login_screen = login.handle_events(screen, clock)
+            login.draw(screen)
+            login_screen = login.handle_events()
         else:
             screen.blit(text_buttons_dict["Quit"]
                         [0], text_buttons_dict["Quit"][1])
@@ -71,7 +71,7 @@ try:
                         text_buttons_dict["Score"][1])
             screen.blit(text_buttons_dict["New Game"]
                         [0], text_buttons_dict["New Game"][1])
-            game_board.draw(screen, width, height, clock)
+            game_board.draw(screen, width, height)
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
                     dir = key_to_dir(event.unicode)
@@ -101,7 +101,8 @@ try:
                             score_text, score_rect)
                         game_board = board.Board()
                         game_board.add_tile()
-
+        pygame.display.flip()
+        clock.tick(60)
     print(game_status[1])
 finally:
     pygame.quit()

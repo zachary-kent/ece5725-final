@@ -51,7 +51,7 @@ class Login:
         self.login_failed_rect = self.login_failed_text.get_rect(
             centerx=width // 2, y=(height * 5 // 6))
 
-    def draw(self, screen, clock):
+    def draw(self, screen):
         # username text box
         username_box_color = self.colors["gray"] if not self.username_clicked else self.colors["white"]
         pygame.draw.rect(screen, username_box_color, self.username_rect)
@@ -83,10 +83,7 @@ class Login:
             screen.blit(self.login_failed_text,
                         self.login_failed_rect)
 
-        pygame.display.flip()
-        clock.tick(60)
-
-    def handle_events(self, screen, clock):
+    def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.username_clicked = self.username_rect.collidepoint(
