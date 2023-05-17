@@ -4,6 +4,12 @@ import { IncorrectPassword, UserNotFound, createUser, highScore, highScores, log
 import { serve, setup } from 'swagger-ui-express'
 import docs from './docs.json'
 
+/*
+ * zak33, nnb28, 5/17/23: index.ts
+ *
+ * Runs our API to accept and respond to incoming requests
+ */
+
 /** The express application */
 const app = express();
 

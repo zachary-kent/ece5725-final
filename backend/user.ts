@@ -1,9 +1,14 @@
-
 import { readFileSync } from 'fs'
 import { initializeApp, cert } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 import { hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
+
+/* 
+ * zak33, nnb28, 5/17/23: user.ts
+ * 
+ * Interacts with the database create users and query their high scores
+ */
 
 /** The secret key used to access our Firestore */
 const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT ?? readFileSync('./serviceAccount.json').toString());

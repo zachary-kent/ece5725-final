@@ -1,9 +1,15 @@
+#
+# zak33, nnb28, 5/17/23: board.py
+# 
+# Represents an abstract board in 2048; comprises the majority of the
+# game logic
+#
+
 import pygame
 import numpy as np
 from enum import Enum
 import enum
 import random
-
 
 # Represents a cardinal direction
 class Dir(Enum):
@@ -139,19 +145,25 @@ class Board:
             return True
         return False
 
+    # True if it is possible to make another move in the game
     def can_shift(self, dir):
         return not np.array_equal(self.board, shift(self.board, dir))
-
+    
+    # Access the value of the tile at a given position
     def at(self, i, j):
         return self.board[i][j]
 
+    # Add a new tile to a random position in the board
+    # Loops if the board is full.
     def add_tile(self):
         i = random.randrange(self.side)
         j = random.randrange(self.side)
         v = 1 if random.randint(0, 1) == 0 else 2
+        # Generate random points until find on that is unoccupied
         while self.at(i, j) != 0:
             i = random.randrange(self.side)
             j = random.randrange(self.side)
+        # Add the tile to this unoccupied position
         self.board[i][j] = v
 
     def get_font(self, height, size_proportion):

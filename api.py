@@ -1,3 +1,10 @@
+#
+# zak33, nnb28, 5/17/23: api.py
+# 
+# Interacts with the deployed service to create users, login, and query their
+# high scores
+#
+
 import requests
 
 URL = 'https://ece5725.herokuapp.com'
