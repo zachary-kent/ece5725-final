@@ -7,26 +7,22 @@
 
 import requests
 
+# The URL of the service
 URL = 'https://ece5725.herokuapp.com'
 
 # Attempts to create a new user with the specified user name and password
 # Returns whether the creation of the account was successful
-
-
 def create_account(username, password):
     body = {'username': username, 'password': password}
     resp = requests.post(f'{URL}/register', json=body)
     return resp.status_code == requests.codes.ok
 
+
 # An error raised when invalid credentials are entered
-
-
 class InvalidCredentialsError(Exception):
     pass
 
 # Represents a user of 2048
-
-
 class User:
 
     # Attempt to login with the provided credentials.
@@ -58,8 +54,6 @@ class User:
 # All high scores, associated with the corresponding user, listed in descending order
 # Returns at most limit results, if provided
 # Example result: [{ 'username': 'zak', 'score': 3}, { 'username': 'nadia', 'score': 2}]
-
-
 def all_high_scores(limit=None):
    route_url = f'{URL}/high-score/rankings'
    if limit is None:
