@@ -59,7 +59,7 @@
     </div>
   </nav>
 
-  <div class="container">
+  <div class="container starter-container">
 
     <div class="starter-template">
       <h1>2048</h1>
@@ -237,6 +237,10 @@
       like changing their high score, they must include this token in their request. The server then validates this
       token to ensure that the request is not impersonating another user. Overall, we were highly pleased with how this
       scheme allowed our authentication to be both secure and elegant.</p>
+    <div style="text-align:center;">
+      <img class="img-rounded" src="img/jwt.png" alt="Generic placeholder image" style="width:75%;">
+      <h4>JWT Authentication Cycle.</h4>
+    </div>
     <h5>Interacting with the Database</h5>
     <p>Although we were not able to use Firestore on a desktop application, we still elected to use it as our database
       due to our familiarity with it. A Firestore database comprises a number of different collections, each of which
@@ -290,6 +294,10 @@
       we could swap our database completely to something like MongoDB and just change the implementation of these core
       functions. Provided the new implementations still respect their specification, the users of these functions would
       not have to modify their code at all.</p>
+    <div style="text-align:center;">
+      <img class="img-rounded" src="img/firestore.png" alt="Firestore" style="width:75%;">
+      <h4>Our Firestore</h4>
+    </div>
     <h5>API</h5>
     <p>Having decided that we would employ a traditional server-based backend, we now needed to settle upon a
       well-defined API (application programming interface) for our service. We created an endpoint for every user action
@@ -297,8 +305,9 @@
       the input information to each action must be provided in the request body, while the output of the action is
       returned through the response body. We wrote and generated the following documentation for our API using Swagger
       UI; it is also publicly available through navigating to the /docs endpoint. </p>
-    <div class="center-block">
+    <div class="center-block" style="text-align:center;">
       <iframe src="https://ece5725.herokuapp.com/docs/" width="640" height="360" frameborder="0"></iframe>
+      <h4>The Swagger documentation for our API</h4>
     </div>
     <h5>Service Implementation</h5>
     <p>Having made all of these design decisions, we were now ready to actually implement our backend in TypeScript. We
@@ -389,6 +398,11 @@
       also tested that omitting required information from the body of a POST request to the “/login” endpoint resulted
       in a 400 response, and providing invalid credentials resulted in a 401 response.</p>
 
+    <div style="text-align:center;">
+      <img class="img-rounded" src="img/postman.png" alt="Postman" style="width:75%;">
+      <h4>Testing our API with Postman</h4>
+    </div>
+
     <hr id='result'>
 
     <div class="section">
@@ -451,17 +465,17 @@
     <div class="row" style="text-align:center;">
       <h2>Work Distribution</h2>
       <div style="text-align:center;">
-        <img class="img-rounded" src="pics/group.jpg" alt="Generic placeholder image" style="width:80%;">
+        <img class="img-rounded" src="img/group.jpg" alt="Generic placeholder image" style="width:80%;">
         <h4>Project group picture</h4>
       </div>
       <div class="col-md-6" style="font-size:16px">
-        <img class="img-rounded" src="pics/a.png" alt="Generic placeholder image" width="240" height="240">
+        <img class="img-rounded" src="img/a.png" alt="Generic placeholder image" width="240" height="240">
         <h3>Rick</h3>
         <p class="lead">netid@cornell.edu</p>
         <p>Designed the overall software architecture (Just being himself).
       </div>
       <div class="col-md-6" style="font-size:16px">
-        <img class="img-rounded" src="pics/b.png" alt="Generic placeholder image" width="240" height="240">
+        <img class="img-rounded" src="img/b.png" alt="Generic placeholder image" width="240" height="240">
         <h3>Morty</h3>
         <p class="lead">netid@cornell.edu</p>
         <p>Tested the overall system.

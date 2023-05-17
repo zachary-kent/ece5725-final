@@ -7,11 +7,23 @@ body {
   text-align: center;
 }
 
+.starter-container {
+  width: 75%;
+}
+
 .section {
   text-align: left;
 }
 
 .section h2 {
+  text-align: center;
+}
+
+.section figure {
+  justify-content: center;
+}
+
+.section figcaption {
   text-align: center;
 }
 
