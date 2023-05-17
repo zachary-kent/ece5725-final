@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>2048</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <!-- <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet"> -->
+
+  <!-- Custom styles for this template -->
+  <link href="starter-template.css" rel="stylesheet">
+
+  <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+  <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+  <!-- <script src="../../assets/js/ie-emulation-modes-warning.js"></script> -->
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+          aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">2048</a>
+      </div>
+      <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#obj">Project Objective</a></li>
+          <li><a href="#intro">Introduction</a></li>
+          <li><a href="#design">Design & Testing</a></li>
+          <li><a href="#results">Results</a></li>
+          <li><a href="#conclusion">Conclusion</a></li>
+          <li><a href="#future">Future Work</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <div class="starter-template">
+      <h1>2048</h1>
+      <!-- <p class="lead">Really Awesome<br>A Project By Jane Doe.</p> -->
+    </div>
+
+    <hr>
+    <div class="center-block">
+      <iframe width="640" height="360" src="https://www.youtube.com/embed/GuM8vTq0jd4" frameborder="0"
+        allowfullscreen></iframe>
+      <h4 style="text-align:center;">Demonstration Video</h4>
+    </div>
+
+    <hr id="obj">
+
+    <div class="section">
+      <h2>Objective</h2>
+      <p>
+        We aimed to implement the classic mobile game of 2048 on the Raspberry Pi to be displayed on (and controlled by)
+        the PiTFT. Further, it is clear that much of the future of embedded systems relies on cloud and IOT integration
+        so that these devices can cooperate and communicate over long distances. To this end, we aimed for different
+        players from arbitrary locations to compete and view each other's high scores, which would persist between
+        different sessions.
+      </p>
+    </div>
+
+    <hr id="intro">
+
+    <div class="section">
+      <h2>Introduction</h2>
+      <p>For our final project, we decided to develop our spin on the
+        classic game of 2048. In 2048, tiles labeled with powers of two are laid out on a 4 by 4 grid. You can shift all
+        tiles up, down, left, or right until they collide with either another tile or the boundary of the grid. If two
+        tiles labeled with the same tile collide, they are merged into a single tile, labeled with the double of the two
+        individual tiles. You lose when the board fills completely with tiles and you can not make any other move to
+        merge them. We aimed to implement 2048 so it was playable on the PiTFT and could be controlled using either the
+        4 tactile buttons or swipes of the touchscreen. Further, we wanted the player's high score to persist across
+        different sessions, and we also wanted each player to be able to view the high scores of other players playing
+        on different machines. We implemented both the game logic and the GUI in Python (using the pygame library),
+        while we implemented persistent high scores by recording this information in Cloud Firestore. Overall, we
+        believe that we were successful in our goal of creating a fundamentally embedded system integrated with the
+        cloud and IOT.
+      </p>
+    </div>
+
+    <hr id='design'>
+
+    <div class="section">
+      <h2>Design & Testing</h2>
+      <p>We took a top-down approach to designing our system, meaning that
+        we broke larger systems into progressively smaller child systems. This allowed us to work independently on many
+        aspects of the project, increasing our efficiency and the degree of “parallelism” to our workflow. Of course,
+        these subsystems would eventually have to interact with each other, but we could instead “stub-in” lightweight
+        interfaces between them to be implemented later. Being forced to develop these subsystems also allowed them to
+        be decoupled, so that the implementation of one could be changed without affecting the other. We decided to
+        break down our application into 3 smaller subsystems: the GUI, the game logic, and the backend database. We will
+        now describe the design and testing of each of these subsystems in detail.
+      </p>
+      <h3>Game Logic</h3>
+      <h4>Design</h4>
+      Our game logic for 2048 needed to encapsulate the abstract logic of 2048, including the positions of different
+      tiles and how they are moved/merged when the board is shifted in different directions. To this end, we created a
+      class “Board” which represents an abstract square board in 2048. Although a typical 2048 board is only 4 by 4, we
+      parameterized this board over its side length so we could potentially support larger boards in the future. We
+      represented a board using a matrix whose entries represent the values of the corresponding tiles. Then, we added
+      methods to this class representing the different actions you would perform on a board while playing the game. For
+      example, we added a <code>shift</code> method that would shift the board in a given direction. This was a
+      non-trivial task,
+      as the semantics for shifting tiles in a different direction are somewhat contrived. Further, we did not want to
+      duplicate code for shifting the board in different directions, as this would make the code more difficult to
+      maintain and fragile to change; the code for shifting the board in different directions would be fundamentally
+      coupled depending on the semantics we had prescribed. In order to minimize code duplication, we decided to only
+      implement the logic for shifting the board left; to shift the board in other directions, we could instead rotate
+      the board, shift it to the left, and rotate it back. We developed the following rules for shifting the tiles in
+      different directions:
+      <ul>
+        <li>To shift the board up, rotate the board 90 degrees counterclockwise, shift the board left, and rotate the
+          board back 90 degrees clockwise</li>
+        <li>To shift the board down, rotate the board 90 degrees clockwise, shift the board left, and rotate the board
+          back 90 degrees counterclockwise</li>
+        <li>To shift the board right, rotate the board 180 degrees counterclockwise, shift the board left, and rotate
+          the board back 180 degrees clockwise</li>
+      </ul>
+      <p>Then, to complete the implementation of shifting the board, all that remained was to implement the
+        functionality for shifting the board left. We “reverse-engineered” the semantics of shifting a 2048 board by
+        playing 2048 online and recording how different edge cases are handled. This ensured that our game logic would
+        match that of the original as closely as possible. Through this testing, we determined that shifting a row of
+        tiles left adheres to the following rules:</p>
+      <ol>
+        <li>First, move all tiles in a row left as far as possible until they are all adjacent.</li>
+        <li>Merge adjacent tiles of equal value into one of double value left to right. Tiles that were already merged
+          into a tile of larger value should not be merged again.</li>
+      </ol>
+      <p>Because every row was represented as an array of tiles, this algorithm could be implemented using a simple
+        python loop where we considered adjacent tiles by inspecting tiles at indices <i>i</i> and <i>i</i> + 1 for
+        <i>i</i> = 0..<i>n</i>, where <i>n</i> denotes the side length of the board. To avoid implementing tedious
+        matrix rotations ourselves, we decided to represent the board using a numpy
+        array, allowing us to use built-in numpy rotations. With the ability to shift a board left and rotate the board
+        to an arbitrary degree, we were able to complete our implementation of <code>shift</code>.
+      </p>
+      <p>The other large component of the game logic included score tracking, which was also somewhat nontrivial to
+        implement. Through empirical testing, we determined that every time you shift the board, your score increases by
+        the sum of the tiles that are merged. In order to implement this logic, we compared the board before shifting
+        and the board after shifting, flattening both into lists of tiles. Then, the score increase by shifting the
+        board is equal to the sum of the tiles in the difference of the shifted board’s tiles and the original board’s
+        tiles. This works because the only tiles that will be added to the board when shifting are those that are merged
+        to create doubled tiles, and the total score increase is the sum of these merged tiles.</p>
+      <p>Finally, we implemented the logic for when determining when a game has ended. After more empirical
+        experimentation, we determined that you lose in 2048 when the board is full and you can make no move to merge
+        any tiles. In order to compute this losing condition, we checked whether shifting the board up, down, left, and
+        right resulted in no change to the board's contents. This completed our implementation of the game logic, which
+        could then be accessed by the GUI using the <code>Board</code> class and its high level methods.</p>
+    </div>
+    <h4>Testing</h4>
+    <p>Comprehensive testing was critical to ensure the correctness of both the game logic and our application as a
+      whole. Uncaught bugs in the game logic code would likely bubble up into the GUI to be viewed by the player. This
+      would make them very hard to diagnose, as such a bug could have originated from any of our 3 different subsystems.
+    </p>
+    <p>In order to ensure that this did not happen, we employed thorough unit testing of our game logic, which was very
+      amenable to assertion-based testing. For example, we wrote several unit tests that asserted shifting a particular
+      board configuration in a specified direction resulted in the correct output board configuration. Unit tests are
+      especially useful in testing the correctness of different edge cases, many of which we considered while writing
+      the logic code itself. Having a fully automated test suite further allowed us to ensure that we did not
+      inadvertently introduce any regressions into our code, which would have also been difficult to spot and correct.
+      We wrote the unit tests themselves using the pytest framework, a very lightweight and well-maintained unit-testing
+      framework for Python.</p>
+
+    <h3>Backend</h3>
+    <h4>Design</h4>
+    <p>Our backend needed to support accesses and persistent updates to users’ high scores. Further, we needed to
+      authenticate users so that a bad actor could not change another user’s score. These two requirements are somewhat
+      fundamentally coupled, as we need to save users’ usernames and passwords in persistent storage. However, it would
+      also be highly insecure to store users’ passwords in plaintext in our database, as sensitive data would be exposed
+      if our database were compromised. Additionally, we had to consider how the GUI would interact with the frontend,
+      which presented the choice of whether or not to implement a serverless backend. Thus, implementing a secure
+      backend was a non-trivial challenge; we now describe and justify the design decisions we made.</p>
+    <h5>Traditional or Serverless?</h5>
+    <p>Initially, we had wished to use a serverless backend; i.e. one where the GUI interacts with the database
+      directly, as opposed to using a deployed API as a middleman. We elected to use Firebase, the serverless backend we
+      were most familiar with. However, we almost immediately ran into issues when we learned that Firebase does not
+      support desktop applications. This forced us to pivot to a more flexible server-based backend. In this scheme, we
+      would write a REST API that would be deployed on a server; this service would accept and authenticate incoming
+      HTTP requests and interact with the database on the requester’s behalf. The GUI would then only interact with the
+      database indirectly by making HTTP requests to our service, a much more flexible interface.</p>
+    <h5>Language Choice</h5>
+    <p>This approach came with other unexpected benefits as well. If we were to employ a serverless backend, all of the
+      code for interacting with the database would have to be written in Python as well. One could imagine using an FFI
+      to support multiple languages, but this likely would be tedious and error-prone. Instead, using a traditional
+      backend allowed us to write our service in any language we wished, as this code would be completely independent
+      from that of the GUI.</p>
+    <p>With this freedom in hand, we decided to implement the backend in TypeScript, a statically typed superset of
+      JavaScript. This allowed us to take advantage of the rich JavaScript web ecosystem while still enjoying the
+      benefits of type-safety. Further, TypeScript has excellent support for asynchronous operations (implemented with
+      the Promise API) that were extremely useful when performing high-latency network operations, like interacting with
+      the database.</p>
+    <h5>Authentication</h5>
+    <p>Authentication is also an objectively difficult problem to solve with many reasonable solutions. As discussed, we
+      needed to store users’ passwords in some shape to ensure that users of the app can only login if they have the
+      correct credentials. To avoid storing them in plain-text, we hashed the user’s passwords before storing them in
+      the database using the bcrypt algorithm implemented in the <code>bcrypt.js</code> library. Then, when we would
+      authenticate a
+      user’s login credentials, we would hash the provided password and check that it matches the hashed password
+      recorded for that user in the database. This does mean, however, that we were transmitting users’ passwords
+      directly from the GUI to the service. We prevented an attacker from intercepting users’ plaintext passwords by
+      using the HTTPS protocol to ensure that this network traffic was encrypted.</p>
+    <p>Additionally, we wanted to avoid sending the users’ passwords every single time they wanted to perform some
+      privileged operation, such as updating their high score. The typical scheme to address this problem involves
+      sending the user an access token once their login credentials have first been authenticated. Then, the user can
+      include this private access token in future requests to perform privileged operations as opposed to repeatedly
+      sending their login credentials. We decided to use JSON Web Tokens to tackle this problem. Given a secret key,
+      JSON web tokens allow you to encrypt some information, such as a username, into an access token; this process is
+      called “signing” the token. This token can then be decrypted to get this information back; this process is called
+      “validating” the token. We applied this technology by signing a web token when a user first logs in and then
+      sending it back to the user via an HTTP response. Then, when a user attempts to perform a privileged operation,
+      like changing their high score, they must include this token in their request. The server then validates this
+      token to ensure that the request is not impersonating another user. Overall, we were highly pleased with how this
+      scheme allowed our authentication to be both secure and elegant.</p>
+    <h5>Interacting with the Database</h5>
+    <p>Although we were not able to use Firestore on a desktop application, we still elected to use it as our database
+      due to our familiarity with it. A Firestore database comprises a number of different collections, each of which
+      can contain documents that store data or more nested collections. Because our use case is fairly simple, we
+      decided that we would only need one collection called <code>users</code> that contains documents recording each
+      user’s data:
+      their high score and password. We use the user’s ID as the unique key for their document containing this data, as
+      we maintain that duplicate usernames are not allowed.</p>
+    <p>To implement functions that would directly interact with the Firestore directly, we had to use the Firebase Admin
+      SDK, which was explicitly created for server-side use. This allowed our code to access Firebase using a “service
+      account,” a secret key formatted as a JSON. We wrote different functions corresponding to the stateful actions a
+      user would perform while playing the game. These included the following:
+    </p>
+    <ul>
+      <li>Creating an account. For this action, we implemented a function <code>register</code> that takes a username
+        and password
+        and creates a new document in the <code>users</code> collection identified by that username. We then record the
+        user’s
+        hashed password and a default high score of 0 in the newly created document. If a document with that username
+        already exists, then we throw an error.</li>
+      <li>Logging in to receive an access token. For this action, we created a function <code>login</code> that takes a
+        username
+        and unencrypted password and returns an access token for that user, if their credentials are correct. We look up
+        the user’s document in the <code>users</code> Firestore collection to view that user’s hashed password; we then
+        verify the
+        provided password using the method described in the Authentication section. If the user’s account has not yet
+        been created or the provided password is incorrect, then we throw an error.</li>
+      <li>Retrieving a single user’s high score. We developed a function <code>highScore</code> that takes a username
+        and returns
+        the high score of the associated account. To accomplish this, we just looked up the document in the users
+        collection associated with the provided username; if it does not exist, then that user’s account has not yet
+        been created and we throw an error.</li>
+      <li>Setting a user’s high score. To implement this functionality, we wrote a function <code>setHighScore</code>
+        that took a
+        username and the new high score as arguments. We then looked up this user’s document in the <code>users</code>
+        collection
+        and updated the property of that document that tracks the high score. Like in the previous function, if this
+        document does not exist then we throw an error.</li>
+      <li>Retrieving the top high scores. To implement a leaderboard, we needed to be able to retrieve the top high
+        scores across all users. We developed a function <code>highScores</code> that takes an optional parameter
+        <code>max</code> indicating
+        the maximum number of high scores to be returned. This was an excellent use case for Firestore “queries,” which
+        emulate functionality of SQL databases. Specifically, we created a query that would first sort the user
+        collection in descending order by high score and then take the first <code>max</code> high scores. If
+        <code>max</code> was not
+        provided, then we just return all of the high scores ranked in descending order.
+      </li>
+    </ul>
+    <p>These functions comprised our service’s interface to the database, allowing the service itself to interact with
+      the database only indirectly through these functions. This allowed us to encapsulate the database itself; later,
+      we could swap our database completely to something like MongoDB and just change the implementation of these core
+      functions. Provided the new implementations still respect their specification, the users of these functions would
+      not have to modify their code at all.</p>
+    <h5>API</h5>
+    <p>Having decided that we would employ a traditional server-based backend, we now needed to settle upon a
+      well-defined API (application programming interface) for our service. We created an endpoint for every user action
+      described in the previous section, but no more; we wanted our API to be as simple as possible. We prescribe that
+      the input information to each action must be provided in the request body, while the output of the action is
+      returned through the response body. We wrote and generated the following documentation for our API using Swagger
+      UI; it is also publicly available through navigating to the /docs endpoint. </p>
+    <div class="center-block">
+      <iframe src="https://ece5725.herokuapp.com/docs/" width="640" height="360" frameborder="0"></iframe>
+    </div>
+    <h5>Service Implementation</h5>
+    <p>Having made all of these design decisions, we were now ready to actually implement our backend in TypeScript. We
+      decided to use the Express framework to generate routes for our service, which is probably the most common and
+      well-maintained solution available. We first created an instance of an Express application and then attached
+      different routes to it; an Express instance has a method for each type of HTTP request. These methods accept both
+      the literal route itself and a callback that will be called when that request to the route is made. This callback
+      accepts both the HTTP request and the HTTP response instance. Translating our OpenAPI specification into a
+      functional express application was not difficult once we had fully planned out every endpoint we needed to create.
+      As described in the previous section, every endpoint corresponds almost exactly to a single core function that
+      interacts with the database</p>
+    <p>When each of these endpoints are accessed, we will invoke the corresponding function developed in the previous
+      section; for example, we would call the <code>login</code> function when the “/login” endpoint is accessed. In
+      order to do
+      this, the requester must include the necessary information in either the request body or query parameters when
+      accessing an endpoint. Considering again the “/login” endpoint, the requester must include a username and password
+      in the request body to pass as arguments to the <code>login</code> function. Then, we would send the result
+      returned by this
+      function (if any) in the response body with a 200 status code on success, a 400 error code if required information
+      was not provided in the request body, and a 401 error code if we were unable to authenticate the user for a
+      privileged operation. This completed our implementation of the service.</p>
+    <h5>Service Deoplyment</h5>
+    <p>We deployed our API using Heroku, which hosts our service publicly at https://ece5725.herokuapp.com/. Deploying
+      with Heroku is fairly simple, although there was some setup involved. Firstly, as far as we know, Heroku cannot
+      interpret TypeScript programs directly. This meant that we first had to compile our TypeScript code to JavaScript
+      using the <code>tsc</code> compiler that would be directly interpreted by heroku. In order to do this, we
+      specified that
+      Heroku should invoke the TypeScript compiler after building our package with a postinstall script. We also had to
+      inject secret keys, including the Firebase service account and JSON web token secret key, into Heroku’s runtime
+      environment. Heroku offers excellent Git integration that allows us to deploy by simply pushing to a remote
+      repository hosted by them.</p>
+    <h5>Interface to GUI</h5>
+    <p>The GUI needed to interact with the service by making HTTP requests to its various endpoints using the ‘requests’
+      library. We wanted to, however, encapsulate our service similar to how we encapsulated our database. As we did
+      before, we developed a lightweight wrapper around the actual HTTP requests to our service. We also wanted to
+      encapsulate the authentication scheme we were using; forcing the GUI to explicitly pass around access tokens would
+      have broken encapsulation. Overall, we aimed to design the interface to the GUI so that the service could be
+      drop-in replaced with another backend solution, such as a serverless backend.</p>
+    <p>This motivated us to develop a ‘User’ class which represents an abstract user of 2048. The constructor of this
+      class takes a username and password, makes a POST request to the “/login” endpoint with these credentials in the
+      request body, and saves the resulting access token from the response body to the object’s state. If the response
+      from the endpoint is not 200, then this means the login failed, and the constructor throws a custom
+      <code>InvalidCredentialsError</code>.
+    </p>
+    <p>Then, we added a <code>high_score</code> method to the User class that fetches and returns the high score of the
+      associated
+      user. We implemented this by making a GET request to the “/high-score” endpoint where the ‘x-access-token’ header
+      is set to the access token saved in the User instance’s state. This demonstrates how we were able to successfully
+      encapsulate the access token within the User class.</p>
+    <p>Similarly, we developed a method <code>set_high_score</code> that updates a user’s high score in the database. To
+      implement
+      this, we made a POST request to the “/high-score” endpoint including the provided score in the request body and,
+      again, the user’s access token in the ‘x-access-token’ header.</p>
+    <p>We also had to develop some functions that were not associated with a User instance. For example, we developed a
+      standalone function <code>create_account</code> that takes a username and password as arguments and attempts to
+      create an
+      account with the given credentials, returning <code>True</code> on success and <code>False</code> on failure. The
+      implementation of this
+      function was fairly simple; we made a POST request to the “/register” endpoint with the provided username and
+      password in the request body. If the response status code is 200, then we return <code>True</code>; otherwise, we
+      return
+      <code>False</code>.
+    </p>
+    <p>Finally, we developed a function <code>all_high_scores</code> that takes an optional argument <code>limit</code>
+      and returns at most
+      <code>limit</code> top high scores, ranked in descending order. Again the implementation of this function was
+      fairly simple;
+      it makes a GET request to the “/high-score/rankings” endpoint. If the optional <code>limit</code> argument is
+      provided, we
+      also include this as a query parameter to the GET request. We then return the list of high scores from the
+      response body. This completed the lightweight implementation of the interface between our service and the GUI.
+    </p>
+    <h4>Testing</h4>
+    <p>Testing our service was imperative in ensuring that our endpoints functioned correctly. We made extensive use of
+      Postman to test our API. Postman allows you to create and save HTTP requests to be run systematically at different
+      times. This was especially useful when we were first developing our service and we were running it locally. We
+      used Postman to make requests to port 8080 on our local machine before actually deploying it to ensure that we did
+      not deploy broken code. We used our OpenAPI specification to guide the cases we tested; our documentation
+      enumerated all valid request schemas for an endpoint and also different classes of invalid requests. This
+      motivated us to test the following properties for every endpoint:</p>
+    <ul>
+      <li>Every valid request sends back the correct response with all required information in the body.</li>
+      <li>Every invalid request sends back the status code specified by our OpenAPI documentation.</li>
+    </ul>
+    <p>For example, we tested that a POST request to the “/login” endpoint with an existing username and correct
+      password resulted in a response containing an access token. We then used this access token when testing other
+      endpoints that required them to authenticate the user, such as a POST request to the “/high-score” endpoint. We
+      also tested that omitting required information from the body of a POST request to the “/login” endpoint resulted
+      in a 400 response, and providing invalid credentials resulted in a 401 response.</p>
+
+    <hr id='result'>
+
+    <div class="section">
+      <h2>Results</h2>
+      <p>Overall, we were highly pleased with the outcome of our project; we were able to successfully develop a 2048
+        game playable on the Raspberry Pi and found that every subsystem worked correctly. You could create an account,
+        login, play 2048 using the tactile switches, and save your high score for viewing on a different device. Thus,
+        we were able to accomplish all of our baseline goals and most of our stretch goals.</p>
+      <p>However, we did encounter several issues along the way, some of which were difficult to debug. One particular
+        defeating instance was when we first deployed the service to Heroku and it immediately crashed; this was
+        especially confusing to us because we had extensively tested the service locally before deploying it. Upon
+        viewing the logs, we found a cryptic error that stated the Firebase service account was invalid even though we
+        had injected it into the runtime environment. Upon some debugging, we found that Heroku had injected it into the
+        runtime environment as a raw string, which in hindsight was to be expected. This was, however, solved easily by
+        parsing the service account injected into the runtime environment.</p>
+      <p>While conducting local testing of our service, we also found that the response of the “/high-score/rankings”
+        endpoint was incorrect; instead of returning an array of scores, it was returning an empty object. Upon
+        debugging, we found that we were actually sending a Promise wrapping the scores in the response. This issue was
+        again easily fixed by waiting for the promise to resolve with the scores before sending them in the response.
+      </p>
+      <p>Beyond these relatively minor issues, however, most aspects of our project were very smooth. We were able to
+        quickly and effectively debug all issues we encountered, a testament to our thorough testing and documentation.
+      </p>
+    </div>
+
+    <hr id='conclusion'>
+
+    <div class="section">
+      <h2>Conclusion</h2>
+      <p>Overall, building 2048 to be played on the Raspberry Pi proved to be an insightful experience in building
+        embedded systems integrated with the cloud. We were not able to gain experience with cloud integration in other
+        labs in the class, so this project demonstrated that it was both relatively painless to achieve and extremely
+        fruitful. Cloud integration opened up our project to limitless possibilities while also presenting many
+        interesting design challenges. Tracking high scores was only one application of cloud integration; it would
+        likely not be difficult to add other network-forward features. Further, we were pleasantly surprised with the
+        effectiveness of our traditional server-based backend, as it allowed our systems to be even more decoupled than
+        they would have with a serverless backend. Generally, we found that encapsulating different parts of our
+        technology stack allowed us to isolate our different subsystems and write clearer code that interfaced between
+        them. This allowed us in turn to be maximally productive; both of us could work on completely decoupled code.
+        Had we not been able to do this, we likely would not have been able to accomplish all of our stretch goals. </p>
+    </div>
+
+    <hr id='future'>
+
+    <div class="section">
+      <h2>Future Work</h2>
+      <p>Now that we have added cloud integration to our 2048 game, there are many possible avenues of future features,
+        both hardware and software-central. One of our stretch goals that we did not end up implementing was realtime
+        competition between players on different devices. In this scheme, different players from remote locations could
+        view each other’s moves in real time and the first player to reach 2048 would win. This would likely be
+        difficult to implement smoothly due to network latencies, but we would likely attempt to do so using the
+        WebSockets protocol. In contrast to HTTP, communication via WebSockets allows you to send interrupt-style
+        updates between the client and the server. The alternative would be to use HTTP polling to continuously check
+        for updates, which is inherently inefficient. Both players could then use WebSockets to send and receive real
+        time updates to the server.</p>
+    </div>
+
+    <hr>
+
+    <div class="row" style="text-align:center;">
+      <h2>Work Distribution</h2>
+      <div style="text-align:center;">
+        <img class="img-rounded" src="pics/group.jpg" alt="Generic placeholder image" style="width:80%;">
+        <h4>Project group picture</h4>
+      </div>
+      <div class="col-md-6" style="font-size:16px">
+        <img class="img-rounded" src="pics/a.png" alt="Generic placeholder image" width="240" height="240">
+        <h3>Rick</h3>
+        <p class="lead">netid@cornell.edu</p>
+        <p>Designed the overall software architecture (Just being himself).
+      </div>
+      <div class="col-md-6" style="font-size:16px">
+        <img class="img-rounded" src="pics/b.png" alt="Generic placeholder image" width="240" height="240">
+        <h3>Morty</h3>
+        <p class="lead">netid@cornell.edu</p>
+        <p>Tested the overall system.
+      </div>
+    </div>
+
+    <hr>
+    <div style="font-size:18px">
+      <h2>Parts List</h2>
+      <ul>
+        <li>Raspberry Pi $35.00</li>
+        <li>Raspberry Pi Camera V2 $25.00</li>
+        <a href="https://www.adafruit.com/product/1463">
+          <li>NeoPixel Ring - $9.95</li>
+        </a>
+        <li>LEDs, Resistors and Wires - Provided in lab</li>
+      </ul>
+      <h3>Total: $69.95</h3>
+    </div>
+    <hr>
+    <div style="font-size:18px">
+      <h2>References</h2>
+      <a href="https://picamera.readthedocs.io/">PiCamera Document</a><br>
+      <a href="http://www.micropik.com/PDF/SG90Servo.pdf">Tower Pro Servo Datasheet</a><br>
+      <a href="http://getbootstrap.com/">Bootstrap</a><br>
+      <a href="http://abyz.co.uk/rpi/pigpio/">Pigpio Library</a><br>
+      <a href="https://sourceforge.net/p/raspberry-gpio-python/wiki/Home/">R-Pi GPIO Document</a><br>
+
+    </div>
+
+    <hr>
+
+    <div class="row">
+      <h2>Code Appendix</h2>
+      <pre><code>
+// Hello World.c
+int main(){
+  printf("Hello World.\n");
+}
+              </code></pre>
+    </div>
+
+  </div><!-- /.container -->
+
+
+
+
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+  <script src="dist/js/bootstrap.min.js"></script>
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
+</body>
+
+</html>
