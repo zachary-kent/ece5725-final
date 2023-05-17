@@ -50,6 +50,6 @@ def all_high_scores(limit=None):
    if limit is None:
       resp = requests.get(route_url)
    else:
-      body = { 'limit': limit }
-      resp = requests.get(route_url, json=body)
+      params = { 'limit': str(limit) }
+      resp = requests.get(route_url, params=params)
    return resp.json()['scores'] if resp.status_code == requests.codes.ok else []
