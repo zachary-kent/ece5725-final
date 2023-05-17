@@ -2,15 +2,40 @@
   "openapi": "3.0.0",
   "info": {
     "title": "2048",
-    "description": "Access users' 2048 high scores"
+    "description": "Access users' 2048 high scores",
+    "version": "1.0.0"
   },
-  "servers": {
-    "url": "https://ece5725.herokuapp.com"
-  },
+  "servers": [
+    {
+      "url": "https://ece5725.herokuapp.com"
+    }
+  ],
   "paths": {
     "/register": {
       "post": {
         "description": "Create a new account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Account successfully created"
@@ -24,6 +49,28 @@
     "/login": {
       "post": {
         "description": "Login to receive an access token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successfully logged in",
@@ -43,6 +90,125 @@
               }
             }
           },
+          "400": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/high-score": {
+      "get": {
+        "description": "Get a user's high score",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-access-token",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Access token used to authenticate request",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved high score",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "score"
+                  ],
+                  "properties": {
+                    "score": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed request body"
+          },
+          "401": {
+            "description": "Missing access token"
+          },
+          "403": {
+            "description": "Malformed access token"
+          }
+        }
+      },
+      "post": {
+        "description": "Update a user's high score",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-access-token",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Access token used to authenticate request",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated high score"
+          },
+          "400": {
+            "description": "Malformed request body"
+          },
+          "401": {
+            "description": "Missing access token"
+          },
+          "403": {
+            "description": "Malformed access token"
+          }
+        }
+      }
+    },
+    "/high-score/rankings": {
+      "get": {
+        "description": "Get ranked high scores",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Max number of scores to return",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved high scores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "username",
+                      "score"
+                    ],
+                    "properties": {
+                      "username": {
+                        "type": "string"
+                      },
+                      "score": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

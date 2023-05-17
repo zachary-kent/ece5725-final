@@ -1,10 +1,14 @@
 import express from 'express'
 import { verify } from 'jsonwebtoken';
 import { IncorrectPassword, UserNotFound, createUser, highScore, highScores, login, setHighScore } from './user';
+import { serve, setup } from 'swagger-ui-express'
+import docs from './docs.json'
 
 const app = express();
 
 app.use(express.json())
+
+app.use('/docs', serve, setup(docs))
 
 const validateToken = async (req, res, next) => {
   const token = req.headers['x-access-token'];
@@ -75,9 +79,20 @@ app.get('/high-score', validateToken, async (req, res) => {
 });
 
 app.get('/high-score/rankings', async (req, res) => {
-  const { limit } = req.body;
   try {
-    const scores = await highScores(limit);
+    const { limit } = req.query;
+    if (limit == null) {
+      const scores = await highScores();
+      return res.status(200).send({ scores })
+    }
+    if (typeof limit !== 'string') {
+      return res.status(400).send('Limit has incorrect type');
+    }
+    const max = parseInt(limit, 10);
+    if (Number.isNaN(max)) {
+      return res.status(400).send('Cannot parse limit');
+    }
+    const scores = await highScores(max);
     return res.status(200).send({ scores })
   } catch {
     return res.sendStatus(400);
