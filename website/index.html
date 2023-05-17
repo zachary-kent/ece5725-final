@@ -517,12 +517,777 @@
 
     <div class="row">
       <h2>Code Appendix</h2>
-      <pre><code>
-// Hello World.c
-int main(){
-  printf("Hello World.\n");
+      <p>Our repo is publicly available <a href="https://github.com/zachary0kent/ece5725-final">here</a>. Additionally,
+        we have attached our code below.</p>
+      <h3>api.py</h3>
+      <!-- HTML generated using hilite.me -->
+      <div
+        style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+        <table>
+          <tr>
+            <td>
+              <pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64</pre>
+            </td>
+            <td>
+              <pre style="margin: 0; line-height: 125%"><span style="color: #888888">#</span>
+<span style="color: #888888"># zak33, nnb28, 5/17/23: api.py</span>
+<span style="color: #888888"># </span>
+<span style="color: #888888"># Interacts with the deployed service to create users, login, and query their</span>
+<span style="color: #888888"># high scores</span>
+<span style="color: #888888">#</span>
+
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">requests</span>
+
+<span style="color: #888888"># The URL of the service</span>
+URL <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;https://ece5725.herokuapp.com&#39;</span>
+
+<span style="color: #888888"># Attempts to create a new user with the specified user name and password</span>
+<span style="color: #888888"># Returns whether the creation of the account was successful</span>
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">create_account</span>(username, password):
+    body <span style="color: #333333">=</span> {<span style="background-color: #fff0f0">&#39;username&#39;</span>: username, <span style="background-color: #fff0f0">&#39;password&#39;</span>: password}
+    resp <span style="color: #333333">=</span> requests<span style="color: #333333">.</span>post(f<span style="background-color: #fff0f0">&#39;{URL}/register&#39;</span>, json<span style="color: #333333">=</span>body)
+    <span style="color: #008800; font-weight: bold">return</span> resp<span style="color: #333333">.</span>status_code <span style="color: #333333">==</span> requests<span style="color: #333333">.</span>codes<span style="color: #333333">.</span>ok
+
+
+<span style="color: #888888"># An error raised when invalid credentials are entered</span>
+<span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">InvalidCredentialsError</span>(<span style="color: #FF0000; font-weight: bold">Exception</span>):
+    <span style="color: #008800; font-weight: bold">pass</span>
+
+<span style="color: #888888"># Represents a user of 2048</span>
+<span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">User</span>:
+
+    <span style="color: #888888"># Attempt to login with the provided credentials.</span>
+    <span style="color: #888888"># Raises `InvalidCredentialsError` if they are invalid</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">__init__</span>(<span style="color: #007020">self</span>, username, password):
+        body <span style="color: #333333">=</span> {<span style="background-color: #fff0f0">&#39;username&#39;</span>: username, <span style="background-color: #fff0f0">&#39;password&#39;</span>: password}
+        resp <span style="color: #333333">=</span> requests<span style="color: #333333">.</span>post(f<span style="background-color: #fff0f0">&#39;{URL}/login&#39;</span>, json<span style="color: #333333">=</span>body)
+        <span style="color: #008800; font-weight: bold">if</span> resp<span style="color: #333333">.</span>status_code <span style="color: #333333">!=</span> requests<span style="color: #333333">.</span>codes<span style="color: #333333">.</span>ok:
+            <span style="color: #008800; font-weight: bold">raise</span> InvalidCredentialsError
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>token <span style="color: #333333">=</span> resp<span style="color: #333333">.</span>json()[<span style="background-color: #fff0f0">&#39;token&#39;</span>]
+
+    <span style="color: #888888"># Get the high score of this user</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">high_score</span>(<span style="color: #007020">self</span>):
+        headers <span style="color: #333333">=</span> {<span style="background-color: #fff0f0">&#39;x-access-token&#39;</span>: <span style="color: #007020">self</span><span style="color: #333333">.</span>token}
+        resp <span style="color: #333333">=</span> requests<span style="color: #333333">.</span>get(f<span style="background-color: #fff0f0">&#39;{URL}/high-score&#39;</span>, headers<span style="color: #333333">=</span>headers)
+        <span style="color: #008800; font-weight: bold">if</span> resp<span style="color: #333333">.</span>status_code <span style="color: #333333">!=</span> requests<span style="color: #333333">.</span>codes<span style="color: #333333">.</span>ok:
+            <span style="color: #008800; font-weight: bold">raise</span> InvalidCredentialsError
+        <span style="color: #008800; font-weight: bold">return</span> resp<span style="color: #333333">.</span>json()[<span style="background-color: #fff0f0">&#39;score&#39;</span>]
+
+    <span style="color: #888888"># Sets the high score of this user. Does nothing if the provided score</span>
+    <span style="color: #888888"># is less than or equal to their current high score.</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">set_high_score</span>(<span style="color: #007020">self</span>, score):
+        headers <span style="color: #333333">=</span> headers <span style="color: #333333">=</span> {<span style="background-color: #fff0f0">&#39;x-access-token&#39;</span>: <span style="color: #007020">self</span><span style="color: #333333">.</span>token}
+        body <span style="color: #333333">=</span> {<span style="background-color: #fff0f0">&#39;score&#39;</span>: score}
+        resp <span style="color: #333333">=</span> requests<span style="color: #333333">.</span>post(f<span style="background-color: #fff0f0">&#39;{URL}/high-score&#39;</span>, json<span style="color: #333333">=</span>body, headers<span style="color: #333333">=</span>headers)
+        <span style="color: #008800; font-weight: bold">if</span> resp<span style="color: #333333">.</span>status_code <span style="color: #333333">!=</span> requests<span style="color: #333333">.</span>codes<span style="color: #333333">.</span>ok:
+            <span style="color: #008800; font-weight: bold">raise</span> InvalidCredentialsError
+
+<span style="color: #888888"># All high scores, associated with the corresponding user, listed in descending order</span>
+<span style="color: #888888"># Returns at most limit results, if provided</span>
+<span style="color: #888888"># Example result: [{ &#39;username&#39;: &#39;zak&#39;, &#39;score&#39;: 3}, { &#39;username&#39;: &#39;nadia&#39;, &#39;score&#39;: 2}]</span>
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">all_high_scores</span>(limit<span style="color: #333333">=</span><span style="color: #007020">None</span>):
+   route_url <span style="color: #333333">=</span> f<span style="background-color: #fff0f0">&#39;{URL}/high-score/rankings&#39;</span>
+   <span style="color: #008800; font-weight: bold">if</span> limit <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>:
+      resp <span style="color: #333333">=</span> requests<span style="color: #333333">.</span>get(route_url)
+   <span style="color: #008800; font-weight: bold">else</span>:
+      params <span style="color: #333333">=</span> { <span style="background-color: #fff0f0">&#39;limit&#39;</span>: <span style="color: #007020">str</span>(limit) }
+      resp <span style="color: #333333">=</span> requests<span style="color: #333333">.</span>get(route_url, params<span style="color: #333333">=</span>params)
+   <span style="color: #008800; font-weight: bold">return</span> resp<span style="color: #333333">.</span>json()[<span style="background-color: #fff0f0">&#39;scores&#39;</span>] <span style="color: #008800; font-weight: bold">if</span> resp<span style="color: #333333">.</span>status_code <span style="color: #333333">==</span> requests<span style="color: #333333">.</span>codes<span style="color: #333333">.</span>ok <span style="color: #008800; font-weight: bold">else</span> []
+</pre>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <h3>backend/user.ts</h3>
+      <!-- HTML generated using hilite.me -->
+      <div
+        style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+        <table>
+          <tr>
+            <td>
+              <pre style="margin: 0; line-height: 125%">  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149</pre>
+            </td>
+            <td>
+              <pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">import</span> { readFileSync } from <span style="background-color: #fff0f0">&#39;fs&#39;</span>
+<span style="color: #008800; font-weight: bold">import</span> { initializeApp, cert } from <span style="background-color: #fff0f0">&#39;firebase-admin/app&#39;</span>
+<span style="color: #008800; font-weight: bold">import</span> { getFirestore } from <span style="background-color: #fff0f0">&#39;firebase-admin/firestore&#39;</span>
+<span style="color: #008800; font-weight: bold">import</span> { hash, compare } from <span style="background-color: #fff0f0">&#39;bcryptjs&#39;</span>;
+<span style="color: #008800; font-weight: bold">import</span> { sign } from <span style="background-color: #fff0f0">&#39;jsonwebtoken&#39;</span>;
+
+<span style="color: #888888">/* </span>
+<span style="color: #888888"> * zak33, nnb28, 5/17/23: user.ts</span>
+<span style="color: #888888"> * </span>
+<span style="color: #888888"> * Interacts with the database to create users and query their high scores</span>
+<span style="color: #888888"> */</span>
+
+<span style="color: #888888">/** The secret key used to access our Firestore */</span>
+<span style="color: #008800; font-weight: bold">const</span> serviceAccount <span style="color: #333333">=</span> JSON.parse(process.env.SERVICE_ACCOUNT <span style="color: #333333">??</span> readFileSync(<span style="background-color: #fff0f0">&#39;./serviceAccount.json&#39;</span>).toString());
+
+<span style="color: #008800; font-weight: bold">const</span> credential <span style="color: #333333">=</span> cert(serviceAccount);
+
+<span style="color: #888888">/** The Firebase app itself */</span>
+<span style="color: #008800; font-weight: bold">const</span> app <span style="color: #333333">=</span> initializeApp({ credential })
+
+<span style="color: #888888">/** The database associated with our Firebase app */</span>
+<span style="color: #008800; font-weight: bold">const</span> firestore <span style="color: #333333">=</span> getFirestore(app);
+
+<span style="color: #888888">/** Represents a user in Firestore */</span>
+type FirestoreUser <span style="color: #333333">=</span> {
+  <span style="color: #888888">/** The hashed password of this user */</span>
+  password: <span style="color: #333399; font-weight: bold">string</span>
+  <span style="color: #888888">/** The high score of this user */</span>
+  score: <span style="color: #333399; font-weight: bold">number</span>
 }
-              </code></pre>
+
+<span style="color: #888888">/** The collection of all 2048 userss */</span>
+<span style="color: #008800; font-weight: bold">const</span> users <span style="color: #333333">=</span> firestore.collection(<span style="background-color: #fff0f0">&#39;users&#39;</span>)
+
+<span style="color: #888888">/** A user, as viewed by the API */</span>
+type User <span style="color: #333333">=</span> {
+  <span style="color: #888888">/** The username of this user */</span>
+  username: <span style="color: #333399; font-weight: bold">string</span>
+  <span style="color: #888888">/** This user&#39;s plaintext password */</span>
+  password: <span style="color: #333399; font-weight: bold">string</span>
+};
+
+<span style="color: #888888">/**</span>
+<span style="color: #888888"> * Create a new user in the database</span>
+<span style="color: #888888"> * </span>
+<span style="color: #888888"> * @param user the user to create</span>
+<span style="color: #888888"> */</span>
+<span style="color: #008800; font-weight: bold">export</span> <span style="color: #008800; font-weight: bold">const</span> createUser <span style="color: #333333">=</span> async ({ username, password }<span style="color: #333333">:</span> User) <span style="color: #333333">=&gt;</span> {
+  <span style="color: #008800; font-weight: bold">const</span> userDocRef <span style="color: #333333">=</span> users.doc(username)
+  <span style="color: #008800; font-weight: bold">const</span> userDoc <span style="color: #333333">=</span> await userDocRef.get();
+  <span style="color: #008800; font-weight: bold">if</span> (userDoc.exists) {
+    <span style="color: #888888">// Do not overwrite existing user</span>
+    <span style="color: #008800; font-weight: bold">throw</span> <span style="color: #008800; font-weight: bold">new</span> <span style="color: #007020">Error</span>(<span style="background-color: #fff0f0">&#39;User already exists&#39;</span>);
+  }
+  <span style="color: #888888">// Create new user</span>
+  await userDocRef.set({
+    password: <span style="color: #333399; font-weight: bold">await</span> hash(password, <span style="color: #0000DD; font-weight: bold">8</span>),
+    score: <span style="color: #333399; font-weight: bold">0</span>,
+  })
+};
+
+<span style="color: #888888">/**</span>
+<span style="color: #888888"> * Get the high score of a user</span>
+<span style="color: #888888"> * </span>
+<span style="color: #888888"> * @param username the user&#39;s name</span>
+<span style="color: #888888"> * @returns The high score of user with username `username`</span>
+<span style="color: #888888"> */</span>
+<span style="color: #008800; font-weight: bold">export</span> <span style="color: #008800; font-weight: bold">const</span> highScore <span style="color: #333333">=</span> async (username: <span style="color: #333399; font-weight: bold">string</span>)<span style="color: #333333">:</span> Promise<span style="color: #333333">&lt;</span><span style="color: #333399; font-weight: bold">number</span><span style="color: #333333">&gt;</span> <span style="color: #333333">=&gt;</span> {
+  <span style="color: #008800; font-weight: bold">const</span> docRef <span style="color: #333333">=</span> users.doc(username);
+  <span style="color: #008800; font-weight: bold">const</span> userDoc <span style="color: #333333">=</span> await docRef.get();
+  <span style="color: #008800; font-weight: bold">if</span> (<span style="color: #333333">!</span>userDoc.exists) {
+    <span style="color: #888888">// User does not exist in database</span>
+    <span style="color: #008800; font-weight: bold">throw</span> <span style="color: #008800; font-weight: bold">new</span> UserNotFound();
+  }
+  <span style="color: #008800; font-weight: bold">return</span> userDoc.data().score;
+}
+
+<span style="color: #888888">/**</span>
+<span style="color: #888888"> * Get an array of ranked high scores</span>
+<span style="color: #888888"> * </span>
+<span style="color: #888888"> * @param max The maximum number of scores to return</span>
+<span style="color: #888888"> * @returns At most `max` high scores</span>
+<span style="color: #888888"> */</span>
+<span style="color: #008800; font-weight: bold">export</span> <span style="color: #008800; font-weight: bold">const</span> highScores <span style="color: #333333">=</span> async (max?: <span style="color: #333399; font-weight: bold">number</span>)<span style="color: #333333">:</span> Promise<span style="color: #333333">&lt;</span><span style="color: #007020">Array</span><span style="color: #333333">&lt;</span>{ username: <span style="color: #333399; font-weight: bold">string</span>; score: <span style="color: #333399; font-weight: bold">number</span> }<span style="color: #333333">&gt;&gt;</span> <span style="color: #333333">=&gt;</span> {
+  <span style="color: #888888">// User all users in descending order of high score</span>
+  <span style="color: #008800; font-weight: bold">let</span> q <span style="color: #333333">=</span> users.orderBy(<span style="background-color: #fff0f0">&#39;score&#39;</span>, <span style="background-color: #fff0f0">&#39;desc&#39;</span>);
+  <span style="color: #008800; font-weight: bold">if</span> (max <span style="color: #333333">!=</span> <span style="color: #008800; font-weight: bold">null</span>) {
+    <span style="color: #888888">// If maximum number given, limit query</span>
+    q <span style="color: #333333">=</span> q.limit(max);
+  }
+  <span style="color: #888888">// Execute query</span>
+  <span style="color: #008800; font-weight: bold">const</span> { docs } <span style="color: #333333">=</span> await q.get();
+  <span style="color: #008800; font-weight: bold">return</span> docs.map(doc <span style="color: #333333">=&gt;</span> {
+    <span style="color: #008800; font-weight: bold">const</span> { score } <span style="color: #333333">=</span> doc.data() <span style="color: #008800; font-weight: bold">as</span> FirestoreUser;
+    <span style="color: #008800; font-weight: bold">return</span> { username: <span style="color: #333399; font-weight: bold">doc.id</span>, score };
+  });
+}
+
+<span style="color: #888888">/**</span>
+<span style="color: #888888"> * Set a user&#39;s high score in the database</span>
+<span style="color: #888888"> * </span>
+<span style="color: #888888"> * @param username the username of the user</span>
+<span style="color: #888888"> * @param score the new high score</span>
+<span style="color: #888888"> * @returns a Promise that resolves when the high score is updated in Firestore</span>
+<span style="color: #888888"> */</span>
+<span style="color: #008800; font-weight: bold">export</span> <span style="color: #008800; font-weight: bold">const</span> setHighScore <span style="color: #333333">=</span> async (username: <span style="color: #333399; font-weight: bold">string</span>, score: <span style="color: #333399; font-weight: bold">number</span>) <span style="color: #333333">=&gt;</span> {
+  <span style="color: #008800; font-weight: bold">const</span> userDocRef <span style="color: #333333">=</span> users.doc(username);
+  <span style="color: #008800; font-weight: bold">const</span> userDoc <span style="color: #333333">=</span> await userDocRef.get();
+  <span style="color: #888888">// User does not exist in database</span>
+  <span style="color: #008800; font-weight: bold">if</span> (<span style="color: #333333">!</span>userDoc.exists) <span style="color: #008800; font-weight: bold">throw</span> <span style="color: #008800; font-weight: bold">new</span> UserNotFound();
+  <span style="color: #888888">// Do nothing if new score is less than current high score</span>
+  <span style="color: #008800; font-weight: bold">if</span> (userDoc.data().score <span style="color: #333333">&gt;=</span> score) <span style="color: #008800; font-weight: bold">return</span>;
+  await userDocRef.update({ score });
+}
+
+<span style="color: #888888">/** Represents an error indicating that the requested user does not exist */</span>
+<span style="color: #008800; font-weight: bold">export</span> <span style="color: #008800; font-weight: bold">class</span> UserNotFound <span style="color: #008800; font-weight: bold">extends</span> <span style="color: #007020">Error</span> {
+  <span style="color: #008800; font-weight: bold">constructor</span>(msg?: <span style="color: #333399; font-weight: bold">string</span>) {
+    <span style="color: #008800; font-weight: bold">super</span>(msg);
+    <span style="color: #007020">Object</span>.setPrototypeOf(<span style="color: #008800; font-weight: bold">this</span>, UserNotFound.prototype);
+  }
+}
+
+<span style="color: #888888">/** Represents an error indicating that an incorrect password was entered */</span>
+<span style="color: #008800; font-weight: bold">export</span> <span style="color: #008800; font-weight: bold">class</span> IncorrectPassword <span style="color: #008800; font-weight: bold">extends</span> <span style="color: #007020">Error</span> {
+  <span style="color: #008800; font-weight: bold">constructor</span>(msg?: <span style="color: #333399; font-weight: bold">string</span>) {
+    <span style="color: #008800; font-weight: bold">super</span>(msg);
+    <span style="color: #007020">Object</span>.setPrototypeOf(<span style="color: #008800; font-weight: bold">this</span>, IncorrectPassword.prototype);
+  }
+}
+
+<span style="color: #888888">/**</span>
+<span style="color: #888888"> * Login to receive an access token</span>
+<span style="color: #888888"> * </span>
+<span style="color: #888888"> * @param user the provided credentials</span>
+<span style="color: #888888"> * @returns An access token uniquely identiftying the user</span>
+<span style="color: #888888"> */</span>
+<span style="color: #008800; font-weight: bold">export</span> <span style="color: #008800; font-weight: bold">const</span> login <span style="color: #333333">=</span> async ({ username, password }<span style="color: #333333">:</span> User)<span style="color: #333333">:</span> Promise<span style="color: #333333">&lt;</span><span style="color: #333399; font-weight: bold">string</span><span style="color: #333333">&gt;</span> <span style="color: #333333">=&gt;</span> {
+  <span style="color: #008800; font-weight: bold">const</span> userDocRef <span style="color: #333333">=</span> users.doc(username);
+  <span style="color: #008800; font-weight: bold">const</span> userDoc <span style="color: #333333">=</span> await userDocRef.get();
+  <span style="color: #008800; font-weight: bold">if</span> (<span style="color: #333333">!</span>userDoc.exists) {
+    <span style="color: #008800; font-weight: bold">throw</span> <span style="color: #008800; font-weight: bold">new</span> UserNotFound();
+  }
+  <span style="color: #008800; font-weight: bold">const</span> user <span style="color: #333333">=</span> userDoc.data() <span style="color: #008800; font-weight: bold">as</span> FirestoreUser;
+  <span style="color: #008800; font-weight: bold">if</span> (<span style="color: #333333">!</span>await compare(password, user.password)) {
+    <span style="color: #008800; font-weight: bold">throw</span> <span style="color: #008800; font-weight: bold">new</span> IncorrectPassword();
+  }
+  <span style="color: #008800; font-weight: bold">return</span> sign(username, process.env.SECRET);
+}
+</pre>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <h3>backend/index.ts</h3>
+      <!-- HTML generated using hilite.me -->
+      <div
+        style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+        <table>
+          <tr>
+            <td>
+              <pre style="margin: 0; line-height: 125%">  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150</pre>
+            </td>
+            <td>
+              <pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">import</span> express from <span style="background-color: #fff0f0">&#39;express&#39;</span>
+<span style="color: #008800; font-weight: bold">import</span> { verify } from <span style="background-color: #fff0f0">&#39;jsonwebtoken&#39;</span>;
+<span style="color: #008800; font-weight: bold">import</span> { IncorrectPassword, UserNotFound, createUser, highScore, highScores, login, setHighScore } from <span style="background-color: #fff0f0">&#39;./user&#39;</span>;
+<span style="color: #008800; font-weight: bold">import</span> { serve, setup } from <span style="background-color: #fff0f0">&#39;swagger-ui-express&#39;</span>
+<span style="color: #008800; font-weight: bold">import</span> docs from <span style="background-color: #fff0f0">&#39;./docs.json&#39;</span>
+
+<span style="color: #888888">/*</span>
+<span style="color: #888888"> * zak33, nnb28, 5/17/23: index.ts</span>
+<span style="color: #888888"> *</span>
+<span style="color: #888888"> * Runs our API to accept and respond to incoming requests</span>
+<span style="color: #888888"> */</span>
+
+<span style="color: #888888">/** The express application */</span>
+<span style="color: #008800; font-weight: bold">const</span> app <span style="color: #333333">=</span> express();
+
+<span style="color: #888888">// Parse request bodies as JSON</span>
+app.use(express.json())
+
+<span style="color: #888888">// Setup the documentation endpoint</span>
+app.use(<span style="background-color: #fff0f0">&#39;/docs&#39;</span>, serve, setup(docs))
+
+
+<span style="color: #888888">/**</span>
+<span style="color: #888888"> * Middleware for authenticating an access token and saving it in the</span>
+<span style="color: #888888"> * locals of a request.</span>
+<span style="color: #888888"> * </span>
+<span style="color: #888888"> * @param req The HTTP request</span>
+<span style="color: #888888"> * @param res The HTTP response</span>
+<span style="color: #888888"> * @param next The next middleware in the application cycle</span>
+<span style="color: #888888"> * @returns the reponse</span>
+<span style="color: #888888"> */</span>
+<span style="color: #008800; font-weight: bold">const</span> validateToken <span style="color: #333333">=</span> async (req, res, next) <span style="color: #333333">=&gt;</span> {
+  <span style="color: #008800; font-weight: bold">const</span> token <span style="color: #333333">=</span> req.headers[<span style="background-color: #fff0f0">&#39;x-access-token&#39;</span>];
+  <span style="color: #008800; font-weight: bold">if</span> (token <span style="color: #333333">==</span> <span style="color: #008800; font-weight: bold">null</span>) {
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">401</span>).send(<span style="background-color: #fff0f0">&quot;Access token required&quot;</span>);
+  }
+  <span style="color: #008800; font-weight: bold">try</span> {
+    <span style="color: #888888">// Get username token was signed with</span>
+    <span style="color: #008800; font-weight: bold">const</span> username <span style="color: #333333">=</span> verify(token, process.env.SECRET);
+    <span style="color: #888888">// Save username in locals of request</span>
+    res.locals.username <span style="color: #333333">=</span> username;
+  } <span style="color: #008800; font-weight: bold">catch</span> {
+    <span style="color: #888888">// Token malformed</span>
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">403</span>).send(<span style="background-color: #fff0f0">&quot;Invalid access token&quot;</span>);
+  }
+  <span style="color: #008800; font-weight: bold">return</span> next();
+}
+
+<span style="color: #888888">// Endpoint for creating an account</span>
+app.post(<span style="background-color: #fff0f0">&#39;/register&#39;</span>, async (req, res) <span style="color: #333333">=&gt;</span> {
+  <span style="color: #008800; font-weight: bold">const</span> { username, password } <span style="color: #333333">=</span> req.body;
+  <span style="color: #008800; font-weight: bold">if</span> (username <span style="color: #333333">==</span> <span style="color: #008800; font-weight: bold">null</span> <span style="color: #333333">||</span> password <span style="color: #333333">==</span> <span style="color: #008800; font-weight: bold">null</span>) {
+    <span style="color: #888888">// Malformed request body</span>
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">400</span>).send(<span style="background-color: #fff0f0">&quot;Username and password required&quot;</span>);
+  }
+  <span style="color: #008800; font-weight: bold">try</span> {
+    <span style="color: #888888">// Create user in database</span>
+    await createUser({ username, password });
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">200</span>).send(<span style="background-color: #fff0f0">&quot;User created&quot;</span>);
+  } <span style="color: #008800; font-weight: bold">catch</span> {
+    <span style="color: #888888">// Duplicate user</span>
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">400</span>).send(<span style="background-color: #fff0f0">&quot;User already exists&quot;</span>);
+  }
+});
+
+<span style="color: #888888">// Endpoint for logging in an obtaining access token</span>
+app.post(<span style="background-color: #fff0f0">&#39;/login&#39;</span>, async (req, res) <span style="color: #333333">=&gt;</span> {
+  <span style="color: #008800; font-weight: bold">const</span> { username, password } <span style="color: #333333">=</span> req.body;
+  <span style="color: #008800; font-weight: bold">if</span> (username <span style="color: #333333">==</span> <span style="color: #008800; font-weight: bold">null</span> <span style="color: #333333">||</span> password <span style="color: #333333">==</span> <span style="color: #008800; font-weight: bold">null</span>) {
+    <span style="color: #888888">// Malformed request body</span>
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">400</span>).send(<span style="background-color: #fff0f0">&#39;Username and password required&#39;</span>);
+  }
+  <span style="color: #008800; font-weight: bold">try</span> {
+    <span style="color: #888888">// Get access token from logging in</span>
+    <span style="color: #008800; font-weight: bold">const</span> token <span style="color: #333333">=</span> await login({ username, password });
+    <span style="color: #888888">// Send it back to user</span>
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">200</span>).send({ token });
+  } <span style="color: #008800; font-weight: bold">catch</span> (e) {
+    <span style="color: #008800; font-weight: bold">if</span> (e <span style="color: #008800; font-weight: bold">instanceof</span> IncorrectPassword) {
+      <span style="color: #888888">// User provided incorrect password</span>
+      <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">400</span>).send(<span style="background-color: #fff0f0">&#39;Incorrect password&#39;</span>);
+    }
+    <span style="color: #008800; font-weight: bold">if</span> (e <span style="color: #008800; font-weight: bold">instanceof</span> UserNotFound) {
+      <span style="color: #888888">// User does not exist</span>
+      <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">400</span>).send(<span style="background-color: #fff0f0">&#39;User not found&#39;</span>);
+    }
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">400</span>).send(<span style="background-color: #fff0f0">&#39;Invalid credentials&#39;</span>);
+  }
+})
+
+<span style="color: #888888">// Endpoint for updating a user&#39;s high score</span>
+app.post(<span style="background-color: #fff0f0">&#39;/high-score&#39;</span>, validateToken, async (req, res) <span style="color: #333333">=&gt;</span> {
+  <span style="color: #008800; font-weight: bold">const</span> { score } <span style="color: #333333">=</span> req.body;
+  <span style="color: #008800; font-weight: bold">if</span> (score <span style="color: #333333">==</span> <span style="color: #008800; font-weight: bold">null</span>) {
+    <span style="color: #888888">// Malformed request body</span>
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">400</span>).send(<span style="background-color: #fff0f0">&quot;Score required&quot;</span>);
+  }
+  <span style="color: #008800; font-weight: bold">try</span> {
+    <span style="color: #888888">// Set high score in database</span>
+    await setHighScore(res.locals.username, score);
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">200</span>).send(<span style="background-color: #fff0f0">&quot;High score updated&quot;</span>);
+  } <span style="color: #008800; font-weight: bold">catch</span> {
+    <span style="color: #888888">// Only occurs when user not found in database</span>
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">400</span>).send(<span style="background-color: #fff0f0">&quot;User not found&quot;</span>);
+  }
+});
+
+<span style="color: #888888">// Endpoint for retrieving a user&#39;s high score</span>
+app.get(<span style="background-color: #fff0f0">&#39;/high-score&#39;</span>, validateToken, async (req, res) <span style="color: #333333">=&gt;</span> {
+  <span style="color: #008800; font-weight: bold">try</span> {
+    <span style="color: #888888">// Get score of user associated with access token</span>
+    <span style="color: #008800; font-weight: bold">const</span> score <span style="color: #333333">=</span> await highScore(res.locals.username);
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">200</span>).send({ score })
+  } <span style="color: #008800; font-weight: bold">catch</span> {
+    <span style="color: #888888">// User not found</span>
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">400</span>).send(<span style="background-color: #fff0f0">&quot;User not found&quot;</span>);
+  }
+});
+
+app.get(<span style="background-color: #fff0f0">&#39;/high-score/rankings&#39;</span>, async (req, res) <span style="color: #333333">=&gt;</span> {
+  <span style="color: #008800; font-weight: bold">try</span> {
+    <span style="color: #008800; font-weight: bold">const</span> { limit } <span style="color: #333333">=</span> req.query;
+    <span style="color: #008800; font-weight: bold">if</span> (limit <span style="color: #333333">==</span> <span style="color: #008800; font-weight: bold">null</span>) {
+      <span style="color: #888888">// Send back all high scores</span>
+      <span style="color: #008800; font-weight: bold">const</span> scores <span style="color: #333333">=</span> await highScores();
+      <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">200</span>).send({ scores })
+    }
+    <span style="color: #008800; font-weight: bold">if</span> (<span style="color: #008800; font-weight: bold">typeof</span> limit <span style="color: #333333">!==</span> <span style="background-color: #fff0f0">&#39;string&#39;</span>) {
+      <span style="color: #888888">// limit has incorrect type</span>
+      <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">400</span>).send(<span style="background-color: #fff0f0">&#39;Limit has incorrect type&#39;</span>);
+    }
+    <span style="color: #888888">// Parse string given representing limit</span>
+    <span style="color: #008800; font-weight: bold">const</span> max <span style="color: #333333">=</span> <span style="color: #007020">parseInt</span>(limit, <span style="color: #0000DD; font-weight: bold">10</span>);
+    <span style="color: #008800; font-weight: bold">if</span> (<span style="color: #007020">Number</span>.<span style="color: #007020">isNaN</span>(max)) {
+      <span style="color: #888888">// limit string does not represent number</span>
+      <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">400</span>).send(<span style="background-color: #fff0f0">&#39;Cannot parse limit&#39;</span>);
+    }
+    <span style="color: #008800; font-weight: bold">const</span> scores <span style="color: #333333">=</span> await highScores(max);
+    <span style="color: #008800; font-weight: bold">return</span> res.status(<span style="color: #0000DD; font-weight: bold">200</span>).send({ scores })
+  } <span style="color: #008800; font-weight: bold">catch</span> {
+    <span style="color: #008800; font-weight: bold">return</span> res.sendStatus(<span style="color: #0000DD; font-weight: bold">400</span>);
+  }
+});
+
+<span style="color: #888888">/** The port the app will accept requests from */</span>
+<span style="color: #008800; font-weight: bold">const</span> port <span style="color: #333333">=</span> process.env.PORT <span style="color: #333333">||</span> <span style="color: #0000DD; font-weight: bold">8080</span>;
+
+app.listen(port, () <span style="color: #333333">=&gt;</span> {
+  console.log(<span style="color: #FF0000; background-color: #FFAAAA">`</span>Listening on port ${port}<span style="color: #FF0000; background-color: #FFAAAA">`</span>);
+})
+</pre>
+            </td>
+          </tr>
+        </table>
+      </div>
+
     </div>
 
   </div><!-- /.container -->
