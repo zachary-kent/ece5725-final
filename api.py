@@ -54,10 +54,10 @@ class User:
 
 
 def all_high_scores(limit=None):
-    route_url = f'{URL}/high-score/rankings'
-    if limit is None:
-        resp = requests.get(route_url)
-    else:
-        body = {'limit': limit}
-        resp = requests.get(route_url, json=body)
-    return resp.json()['scores'] if resp.status_code == requests.codes.ok else []
+   route_url = f'{URL}/high-score/rankings'
+   if limit is None:
+      resp = requests.get(route_url)
+   else:
+      params = { 'limit': str(limit) }
+      resp = requests.get(route_url, params=params)
+   return resp.json()['scores'] if resp.status_code == requests.codes.ok else []
