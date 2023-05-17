@@ -63,7 +63,7 @@
 
     <div class="starter-template">
       <h1>2048</h1>
-      <!-- <p class="lead">Really Awesome<br>A Project By Jane Doe.</p> -->
+      <p class="lead">May 17, 2023<br>Created by Zachary Kent (zak33) and Nadia Barakatain (nnb28)</p>
     </div>
 
     <hr>
@@ -164,7 +164,7 @@
         implement. Through empirical testing, we determined that every time you shift the board, your score increases by
         the sum of the tiles that are merged. In order to implement this logic, we compared the board before shifting
         and the board after shifting, flattening both into lists of tiles. Then, the score increase by shifting the
-        board is equal to the sum of the tiles in the difference of the shifted board’s tiles and the original board’s
+        board is equal to the sum of the tiles in the difference of the shifted board's tiles and the original board's
         tiles. This works because the only tiles that will be added to the board when shifting are those that are merged
         to create doubled tiles, and the total score increase is the sum of these merged tiles.</p>
       <p>Finally, we implemented the logic for when determining when a game has ended. After more empirical
@@ -189,10 +189,10 @@
 
     <h3>Backend</h3>
     <h4>Design</h4>
-    <p>Our backend needed to support accesses and persistent updates to users’ high scores. Further, we needed to
-      authenticate users so that a bad actor could not change another user’s score. These two requirements are somewhat
-      fundamentally coupled, as we need to save users’ usernames and passwords in persistent storage. However, it would
-      also be highly insecure to store users’ passwords in plaintext in our database, as sensitive data would be exposed
+    <p>Our backend needed to support accesses and persistent updates to users' high scores. Further, we needed to
+      authenticate users so that a bad actor could not change another user's score. These two requirements are somewhat
+      fundamentally coupled, as we need to save users' usernames and passwords in persistent storage. However, it would
+      also be highly insecure to store users' passwords in plaintext in our database, as sensitive data would be exposed
       if our database were compromised. Additionally, we had to consider how the GUI would interact with the frontend,
       which presented the choice of whether or not to implement a serverless backend. Thus, implementing a secure
       backend was a non-trivial challenge; we now describe and justify the design decisions we made.</p>
@@ -202,7 +202,7 @@
       were most familiar with. However, we almost immediately ran into issues when we learned that Firebase does not
       support desktop applications. This forced us to pivot to a more flexible server-based backend. In this scheme, we
       would write a REST API that would be deployed on a server; this service would accept and authenticate incoming
-      HTTP requests and interact with the database on the requester’s behalf. The GUI would then only interact with the
+      HTTP requests and interact with the database on the requester's behalf. The GUI would then only interact with the
       database indirectly by making HTTP requests to our service, a much more flexible interface.</p>
     <h5>Language Choice</h5>
     <p>This approach came with other unexpected benefits as well. If we were to employ a serverless backend, all of the
@@ -217,15 +217,15 @@
       the database.</p>
     <h5>Authentication</h5>
     <p>Authentication is also an objectively difficult problem to solve with many reasonable solutions. As discussed, we
-      needed to store users’ passwords in some shape to ensure that users of the app can only login if they have the
-      correct credentials. To avoid storing them in plain-text, we hashed the user’s passwords before storing them in
+      needed to store users' passwords in some shape to ensure that users of the app can only login if they have the
+      correct credentials. To avoid storing them in plain-text, we hashed the user's passwords before storing them in
       the database using the bcrypt algorithm implemented in the <code>bcrypt.js</code> library. Then, when we would
       authenticate a
-      user’s login credentials, we would hash the provided password and check that it matches the hashed password
-      recorded for that user in the database. This does mean, however, that we were transmitting users’ passwords
-      directly from the GUI to the service. We prevented an attacker from intercepting users’ plaintext passwords by
+      user's login credentials, we would hash the provided password and check that it matches the hashed password
+      recorded for that user in the database. This does mean, however, that we were transmitting users' passwords
+      directly from the GUI to the service. We prevented an attacker from intercepting users' plaintext passwords by
       using the HTTPS protocol to ensure that this network traffic was encrypted.</p>
-    <p>Additionally, we wanted to avoid sending the users’ passwords every single time they wanted to perform some
+    <p>Additionally, we wanted to avoid sending the users' passwords every single time they wanted to perform some
       privileged operation, such as updating their high score. The typical scheme to address this problem involves
       sending the user an access token once their login credentials have first been authenticated. Then, the user can
       include this private access token in future requests to perform privileged operations as opposed to repeatedly
@@ -239,15 +239,16 @@
       scheme allowed our authentication to be both secure and elegant.</p>
     <div style="text-align:center;">
       <img class="img-rounded" src="img/jwt.png" alt="Generic placeholder image" style="width:75%;">
-      <h4>JWT Authentication Cycle.</h4>
+      <h4>Figure 2: JWT Authentication Cycle. <a href="https://cdn.auth0.com/content/jwt/jwt-diagram.png">Source</a>.
+      </h4>
     </div>
     <h5>Interacting with the Database</h5>
     <p>Although we were not able to use Firestore on a desktop application, we still elected to use it as our database
       due to our familiarity with it. A Firestore database comprises a number of different collections, each of which
       can contain documents that store data or more nested collections. Because our use case is fairly simple, we
       decided that we would only need one collection called <code>users</code> that contains documents recording each
-      user’s data:
-      their high score and password. We use the user’s ID as the unique key for their document containing this data, as
+      user's data:
+      their high score and password. We use the user's ID as the unique key for their document containing this data, as
       we maintain that duplicate usernames are not allowed.</p>
     <p>To implement functions that would directly interact with the Firestore directly, we had to use the Firebase Admin
       SDK, which was explicitly created for server-side use. This allowed our code to access Firebase using a “service
@@ -258,24 +259,24 @@
       <li>Creating an account. For this action, we implemented a function <code>register</code> that takes a username
         and password
         and creates a new document in the <code>users</code> collection identified by that username. We then record the
-        user’s
+        user's
         hashed password and a default high score of 0 in the newly created document. If a document with that username
         already exists, then we throw an error.</li>
       <li>Logging in to receive an access token. For this action, we created a function <code>login</code> that takes a
         username
         and unencrypted password and returns an access token for that user, if their credentials are correct. We look up
-        the user’s document in the <code>users</code> Firestore collection to view that user’s hashed password; we then
+        the user's document in the <code>users</code> Firestore collection to view that user's hashed password; we then
         verify the
-        provided password using the method described in the Authentication section. If the user’s account has not yet
+        provided password using the method described in the Authentication section. If the user's account has not yet
         been created or the provided password is incorrect, then we throw an error.</li>
-      <li>Retrieving a single user’s high score. We developed a function <code>highScore</code> that takes a username
+      <li>Retrieving a single user's high score. We developed a function <code>highScore</code> that takes a username
         and returns
         the high score of the associated account. To accomplish this, we just looked up the document in the users
-        collection associated with the provided username; if it does not exist, then that user’s account has not yet
+        collection associated with the provided username; if it does not exist, then that user's account has not yet
         been created and we throw an error.</li>
-      <li>Setting a user’s high score. To implement this functionality, we wrote a function <code>setHighScore</code>
+      <li>Setting a user's high score. To implement this functionality, we wrote a function <code>setHighScore</code>
         that took a
-        username and the new high score as arguments. We then looked up this user’s document in the <code>users</code>
+        username and the new high score as arguments. We then looked up this user's document in the <code>users</code>
         collection
         and updated the property of that document that tracks the high score. Like in the previous function, if this
         document does not exist then we throw an error.</li>
@@ -289,14 +290,14 @@
         provided, then we just return all of the high scores ranked in descending order.
       </li>
     </ul>
-    <p>These functions comprised our service’s interface to the database, allowing the service itself to interact with
+    <p>These functions comprised our service's interface to the database, allowing the service itself to interact with
       the database only indirectly through these functions. This allowed us to encapsulate the database itself; later,
       we could swap our database completely to something like MongoDB and just change the implementation of these core
       functions. Provided the new implementations still respect their specification, the users of these functions would
       not have to modify their code at all.</p>
     <div style="text-align:center;">
       <img class="img-rounded" src="img/firestore.png" alt="Firestore" style="width:75%;">
-      <h4>Our Firestore</h4>
+      <h4>Figure 3: Firestore</h4>
     </div>
     <h5>API</h5>
     <p>Having decided that we would employ a traditional server-based backend, we now needed to settle upon a
@@ -336,31 +337,31 @@
       using the <code>tsc</code> compiler that would be directly interpreted by heroku. In order to do this, we
       specified that
       Heroku should invoke the TypeScript compiler after building our package with a postinstall script. We also had to
-      inject secret keys, including the Firebase service account and JSON web token secret key, into Heroku’s runtime
+      inject secret keys, including the Firebase service account and JSON web token secret key, into Heroku's runtime
       environment. Heroku offers excellent Git integration that allows us to deploy by simply pushing to a remote
       repository hosted by them.</p>
     <h5>Interface to GUI</h5>
-    <p>The GUI needed to interact with the service by making HTTP requests to its various endpoints using the ‘requests’
+    <p>The GUI needed to interact with the service by making HTTP requests to its various endpoints using the ‘requests'
       library. We wanted to, however, encapsulate our service similar to how we encapsulated our database. As we did
       before, we developed a lightweight wrapper around the actual HTTP requests to our service. We also wanted to
       encapsulate the authentication scheme we were using; forcing the GUI to explicitly pass around access tokens would
       have broken encapsulation. Overall, we aimed to design the interface to the GUI so that the service could be
       drop-in replaced with another backend solution, such as a serverless backend.</p>
-    <p>This motivated us to develop a ‘User’ class which represents an abstract user of 2048. The constructor of this
+    <p>This motivated us to develop a ‘User' class which represents an abstract user of 2048. The constructor of this
       class takes a username and password, makes a POST request to the “/login” endpoint with these credentials in the
-      request body, and saves the resulting access token from the response body to the object’s state. If the response
+      request body, and saves the resulting access token from the response body to the object's state. If the response
       from the endpoint is not 200, then this means the login failed, and the constructor throws a custom
       <code>InvalidCredentialsError</code>.
     </p>
     <p>Then, we added a <code>high_score</code> method to the User class that fetches and returns the high score of the
       associated
-      user. We implemented this by making a GET request to the “/high-score” endpoint where the ‘x-access-token’ header
-      is set to the access token saved in the User instance’s state. This demonstrates how we were able to successfully
+      user. We implemented this by making a GET request to the “/high-score” endpoint where the ‘x-access-token' header
+      is set to the access token saved in the User instance's state. This demonstrates how we were able to successfully
       encapsulate the access token within the User class.</p>
-    <p>Similarly, we developed a method <code>set_high_score</code> that updates a user’s high score in the database. To
+    <p>Similarly, we developed a method <code>set_high_score</code> that updates a user's high score in the database. To
       implement
       this, we made a POST request to the “/high-score” endpoint including the provided score in the request body and,
-      again, the user’s access token in the ‘x-access-token’ header.</p>
+      again, the user's access token in the ‘x-access-token' header.</p>
     <p>We also had to develop some functions that were not associated with a User instance. For example, we developed a
       standalone function <code>create_account</code> that takes a username and password as arguments and attempts to
       create an
@@ -452,7 +453,7 @@
       <p>Now that we have added cloud integration to our 2048 game, there are many possible avenues of future features,
         both hardware and software-central. One of our stretch goals that we did not end up implementing was realtime
         competition between players on different devices. In this scheme, different players from remote locations could
-        view each other’s moves in real time and the first player to reach 2048 would win. This would likely be
+        view each other's moves in real time and the first player to reach 2048 would win. This would likely be
         difficult to implement smoothly due to network latencies, but we would likely attempt to do so using the
         WebSockets protocol. In contrast to HTTP, communication via WebSockets allows you to send interrupt-style
         updates between the client and the server. The alternative would be to use HTTP polling to continuously check
@@ -470,15 +471,15 @@
       </div>
       <div class="col-md-6" style="font-size:16px">
         <img class="img-rounded" src="img/a.png" alt="Generic placeholder image" width="240" height="240">
-        <h3>Rick</h3>
-        <p class="lead">netid@cornell.edu</p>
-        <p>Designed the overall software architecture (Just being himself).
+        <h3>Zak</h3>
+        <p class="lead">zak33@cornell.edu</p>
+        <p>Developed the game logic, backend, and setup website.
       </div>
       <div class="col-md-6" style="font-size:16px">
         <img class="img-rounded" src="img/b.png" alt="Generic placeholder image" width="240" height="240">
-        <h3>Morty</h3>
-        <p class="lead">netid@cornell.edu</p>
-        <p>Tested the overall system.
+        <h3>Nadia</h3>
+        <p class="lead">nnb28@cornell.edu</p>
+        <p>Developed the GUI and integration with GPIO; described these in lab report.
       </div>
     </div>
 
@@ -486,23 +487,29 @@
     <div style="font-size:18px">
       <h2>Parts List</h2>
       <ul>
-        <li>Raspberry Pi $35.00</li>
-        <li>Raspberry Pi Camera V2 $25.00</li>
-        <a href="https://www.adafruit.com/product/1463">
-          <li>NeoPixel Ring - $9.95</li>
-        </a>
-        <li>LEDs, Resistors and Wires - Provided in lab</li>
+        <li>Raspberry Pi $0.00 (Provided)</li>
+        <li>Raspberry Pi TFT $0.00 (Provided)</li>
+        <li>Heroku Deployment Fees $7</li>
       </ul>
-      <h3>Total: $69.95</h3>
+      <h3>Total: $7</h3>
     </div>
     <hr>
     <div style="font-size:18px">
       <h2>References</h2>
-      <a href="https://picamera.readthedocs.io/">PiCamera Document</a><br>
-      <a href="http://www.micropik.com/PDF/SG90Servo.pdf">Tower Pro Servo Datasheet</a><br>
-      <a href="http://getbootstrap.com/">Bootstrap</a><br>
-      <a href="http://abyz.co.uk/rpi/pigpio/">Pigpio Library</a><br>
-      <a href="https://sourceforge.net/p/raspberry-gpio-python/wiki/Home/">R-Pi GPIO Document</a><br>
+      <ul>
+        <li><a href="https://firebase.google.com/docs/reference/admin">Firebase Admin SDK Reference</a><br></li>
+        <li><a href="https://auth0.com/docs/secure/tokens/json-web-tokens">Explanation of JSON Web Tokens</a><br></li>
+        <li><a
+            href="https://medium.com/@prashantramnyc/authenticate-rest-apis-in-node-js-using-jwt-json-web-tokens-f0e97669aad3">JSON
+            Web Token Tutorial</a><br></li>
+        <li><a href="https://dev.to/crrojas88/deploying-a-git-subdirectory-to-heroku-23ld">Deploying a Git Subdirectory
+            to Heroku</a><br>
+        </li>
+        <li><a href="https://sourceforge.net/p/raspberry-gpio-python/wiki/Home/">R-Pi GPIO Documentation</a><br></li>
+        <li><a href="https://support.smartbear.com/swaggerhub/docs/tutorials/openapi-3-tutorial.html">OpenAPI
+            Reference</a></li>
+      </ul>
+
 
     </div>
 
