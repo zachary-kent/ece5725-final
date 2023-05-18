@@ -85,6 +85,10 @@
         different sessions.
       </p>
     </div>
+    <div style="text-align:center;">
+      <img class="img-rounded" src="img/game.png" alt="Game screen" style="width:40%;">
+      <h4>Figure 1: 2048 Gameplay</h4>
+    </div>
 
     <hr id="intro">
 
@@ -411,71 +415,86 @@
 
     <h5>Game Screen</h5>
     <p>We began by first designing the GUI for the game screen by displaying a square grid with a default size of four
-      by four, which could be changed when specified by the user. This was implemented using a ‘draw’ method, created
-      inside of the ‘Board’ class, which when called, displays the current state of the board. This ‘draw’ method loops
+      by four, which could be changed when specified by the user. This was implemented using a <code>draw</code> method,
+      created
+      inside of the <code>Board</code> class, which when called, displays the current state of the board. This ‘draw’
+      method loops
       through each spot inside of the board matrix to access its corresponding value and, subsequently, associate the
       tile’s value with its corresponding tile color to ultimately display the grid of colored, number tiles on the
       pygame screen. In order to interactively update the player’s view, we redrew the board in every iteration of the
       game’s main loop, ensuring that the user would be able to see the tiles shift and therefore, the board change in
       response to their input of the direction to shift the tiles.
-      To the right of the board, we displayed these five items: the player’s current score, a ‘New Game’ button, a
-      ‘Quit’ button, a ‘Scores’ button’, and a ‘Logout’ button. The player’s current score is a value calculated in the
-      ‘Board’ class each time the player shifts the tiles in a direction. This value was then accessed to display to the
-      player how their progress in the game is going. The ‘New Game’ button, when pressed, refreshes the board by
+      To the right of the board, we displayed these five items: the player’s current score, a “New Game” button, a
+      “Quit” button, a “Scores” button, and a “Logout” button. The player’s current score is a value calculated in the
+      <code>Board</code> class each time the player shifts the tiles in a direction. This value was then accessed to
+      display to the
+      player how their progress in the game is going. The “New Game” button, when pressed, refreshes the board by
       assigning the board object to an empty board, randomly adds a new tile of the value two or four, and in the next
-      iteration of the main game loop, this new game board is displayed using the ‘draw’ method described above. The
-      ‘Quit’ button, when pressed, terminates the game. Clicking this button is the only way that the user is able to
-      exit the game. The ‘Scores’ button, when pressed, navigates to a new view of the game, called the ‘Leaderboard,’
+      iteration of the main game loop, this new game board is displayed using the <code>draw</code> method described
+      above. The
+      “Quit” button, when pressed, terminates the game. Clicking this button is the only way that the user is able to
+      exit the game. The “Scores” button, when pressed, navigates to a new view of the game, called the “Leaderboard,”
       where the top seven players are displayed with their respective scores to allow players of the game to see how
-      their skill might compare with other players in the game. Finally, the ‘Logout’ button, when clicked, interacts
-      with the API to log the user out of their session and navigates to the ‘Login Screen’ to allow the user to either
+      their skill might compare with other players in the game. Finally, the “Logout” button, when clicked, interacts
+      with the API to log the user out of their session and navigates to the “Login Screen” to allow the user to either
       login again or to allow another user to create an account or login.
     </p>
-
-    <h5>Login Screen</h5>
-    <p>After completing the implementation of the ‘Game Screen,’ we next designed the GUI for the ‘Login Screen,’ the
-      view which allows the user to input a username and password in order to either create an account, or to log into
-      their existing account, to then begin playing the game. We implemented this by creating a new class called ‘Login’
-      in order to modularize our code, and allow the main function to call only the necessary functions when displaying
-      the login screen. Inside of the ‘Login’ class, we created a ‘draw’ method, which when called, uses pygame to
-      display the current state of all of the login screen components to the user. Implementing the username and
-      password textboxes and allowing for user input while also displaying this input interactively was the trickiest
-      part. In order to do so, we initially created and displayed two rectangular boxes, which change color based on
-      whether they have been the most recently clicked item on the screen, onto the pygame window. After doing this, we
-      used the current state of the user’s input of their username and their password, which is handled in the ‘Login’
-      class’s ‘handle_events’ method, in order to create two new respective pygame Rects. Displayed beneath the two text
-      boxes are two buttons: the button ‘Login’ and the button ‘Create Account.’ The ‘Login’ button acts as a navigation
-      button, which navigates to the ‘Game Screen’ if the username and password entered are verified using the API as
-      existing and correct. If the API indicates that the username and password entered are not correct, then the
-      ‘Login’ button does not navigate to the ‘Game Screen,’ and instead, “Incorrect username or password” is displayed
-      below the ‘Login’ and ‘Create Account’ buttons to communicate with the user that what they have entered does not
-      correspond with an account in the database. The ‘Create Account’ button serves as a way for the user to interact
-      with the database to create a new account. If a new account is successfully made, then the message “Success!” is
-      displayed. If an account that already exists is attempted to be created, nothing is displayed, indicating that
-      there has been no change in the database. Once an account has been successfully created, the user can click the
-      ‘Login’ button to then successfully login and navigate to the ‘Game Screen.’ We used this ‘draw’ method of the
-      ‘Login’ class inside of the main code and while the user was in the ‘Login Screen’, we called it on each iteration
-      of the main game’s loop, allowing for the text being displayed in the username and password box to be interactive
-      with the user’s keyboard input.</p>
 
     <div style="text-align:center;">
       <img class="img-rounded" src="img/game.png" alt="Game screen" style="width:40%;">
       <h4>Figure 6: Game Screen</h4>
     </div>
 
-    <p>Taking in the text input from the user to then be displayed using the ‘draw’ method was handled inside of the
-      ‘handle_events’ method of the ‘Login’ class. The ‘handle_events’ method, when called, uses pygame to loop through
+    <h5>Login Screen</h5>
+    <p>After completing the implementation of the “Game Screen,” we next designed the GUI for the “Login Screen,” the
+      view which allows the user to input a username and password in order to either create an account, or to log into
+      their existing account, and to then begin playing the game. We implemented this by creating a new class called
+      <code>Login</code> in order to modularize our code, and allow the main function to call only the necessary
+      functions when
+      displaying the login screen. Inside of the <code>Login</code> class, we created a ‘draw’ method, which when
+      called, uses
+      pygame to display the current state of all of the login screen components to the user.
+    </p>
+
+    <p>Implementing the username and password textboxes and allowing for user input while also displaying this input
+      interactively was the trickiest part. In order to do so, we initially created and displayed two rectangular boxes,
+      which change color based on whether they had been the most recently clicked item on the screen, onto the pygame
+      window. After doing this, we used the current state of the user’s input of their username and their password,
+      which is handled in the <code>Login</code>’ class’s <code>handle_events</code> method, in order to create two new
+      respective pygame
+      Rects. Displayed beneath the two text boxes are two buttons: the button “Login” and the button “Create Account.”
+      The ‘Login’ button acts as a navigation button, which navigates to the ‘Game Screen’ if the username and password
+      entered are verified using the API as existing and correct. If the API indicates that the username and password
+      entered are not correct, then the “Login” button does not navigate to the “Game Screen,” and instead, “Incorrect
+      username or password” is displayed below the “Login” and “Create Account” buttons to communicate with the user
+      that what they have entered does not correspond with an account in the database. The “Create Account” button
+      serves as a way for the user to interact with the database to create a new account. If a new account is
+      successfully made, then the message “Success!” is displayed. If an account that already exists is attempted to be
+      created, nothing is displayed, indicating that there has been no change in the database. Once an account has been
+      successfully created, the user can click the “Login” button to then successfully login and navigate to the “Game
+      Screen.” We called this <code>draw</code> method of the <code>Login</code> class inside of the main code, and
+      while the user was in the
+      “Login Screen”, we called it on each iteration of the main game’s loop, allowing for the text being displayed in
+      the username and password box to be interactive with the user’s keyboard input.</p>
+
+    <p>Taking in the text input from the user to then be displayed using the <code>draw</code> method was handled inside
+      of the
+      <code>handle_events</code> method of the <code>Login</code> class. The <code>handle_events</code> method, when
+      called, uses pygame to loop through
       all events detected from the user interacting with the GUI to do different actions based on the event.
       Specifically for the text boxes, we looped through all keyboard events. If a keyboard event was detected, the
-      ‘handle_events’ method of the ‘Login’ class checks if it came from the keyboard’s backspace button. If so, then
+      <code>handle_events</code> method of the <code>Login</code> class checks if it came from the keyboard’s backspace
+      button. If so, then
       the method takes out the last character in either the username text or the password text, depending on which one
       was selected. If, instead, a keyboard event was detected but not from the keyboard’s backspace buttons, then the
-      ‘handle_events’ method would concatenate the detected unicode character to the end of the username text string or
-      the password text string, depending on which one was selected. If, instead, neither the username nor the password
-      text boxes were selected in the GUI, then a keyboard event would result in no change to either of their text
-      strings. The ‘handle_events’ method of the ‘Login’ class also detects mouse click events to check for if the
-      ‘Login’ button or the ‘Create Account’ button were clicked, and presents new messages or views to the user, as
-      described above.</p>
+      <code>handle_events</code> method concatenates the detected unicode character to the end of the username text
+      string or the
+      password text string, depending on which one was selected. If, instead, neither the username nor the password text
+      boxes were selected in the GUI, then a keyboard event results in no change to either of their text strings. The
+      <code>handle_events</code> method of the <code>Login</code> class also detects mouse click events to check for if
+      the “Login” button or
+      the “Create Account” button were clicked, and presents new messages or views to the user, as described above.
+    </p>
 
     <div class="row" style="text-align:center;">
       <div class="col-md-6">
@@ -489,16 +508,21 @@
     </div>
 
     <h5>Leaderboard</h5>
-    <p>Finally, we implemented the ‘Leaderboard,’ the view that allows any user to see how their scores compare with the
-      top seven highest scores. The ‘Leaderboard’ screen can be reached from the ‘Game Screen’ view by clicking the
-      ‘Scores’ button. After clicking the ‘Scores’ button, the user navigates to this new screen where they are able to
+    <p>Finally, we implemented the “Leaderboard,” the view that allows any user to see how their scores compare with the
+      top seven highest scores. The “Leaderboard” screen can be reached from the “Game Screen” view by clicking the
+      “Scores” button. After clicking the “Scores” button, the user navigates to this new screen where they are able to
       see the highest seven scores and the usernames of the corresponding player who reached these scores, as well as a
-      ‘Back’ button, which when clicked allows them to navigate back to the ‘Game Screen’ and continue their progress in
-      their current game. We implemented this by creating a ‘Leaderboard’ class which consists of a ‘draw’ method and a
-      ‘handle_events’ method. The ‘handle_events’ method only checks for the event that the ‘Back’ button has been
-      clicked. In the case of this event, it navigates the view back to the ‘Game Screen.’ The ‘draw’ method uses the
-      ‘all_high_scores’ method from API to get the seven highest scores. After getting these scores, the ‘draw’ method
-      loops through the scores in order to display the usernames and their corresponding highest scores using pygame.
+      “Back” button, which when clicked allows them to navigate back to the “Game Screen” and continue their progress in
+      their current game. We implemented this by creating a <code>Leaderboard</code> class which consists of a ‘draw’
+      method and a
+      <code>handle_events</code> method. The <code>handle_events</code> method only checks for the event that the “Back”
+      button has been
+      clicked. In the case of this event, it navigates the view back to the “Game Screen.” The <code>draw</code> method
+      uses the
+      <code>all_high_scores</code> method from the API to get the seven highest scores. After getting these scores, the
+      <code>draw</code>
+      method loops through the scores in order to display the usernames and their corresponding highest scores using
+      pygame.
     </p>
 
     <div style="text-align:center;">
@@ -508,13 +532,15 @@
 
     <h4>Testing</h4>
     <p>Testing our GUI was very important to ensure that the users are able to properly interact with the game and
-      ultimately play 2048. We tested the GUI using our local computers, using the size of the piTFT screen for the
-      pygame window, in order to simulate the user playing the game using the piTFT and to allow for quick feedback and
-      turn around time. Each change that was made on the GUI was then checked by running the game in the pygame window
-      to ensure that the change worked and that we could safely move to implementing the next feature of the GUI. This
-      process allowed us to catch any errors quickly and prevent them from creating issues with the next features
-      implemented. After ensuring that the GUI properly worked on our local computers, we then began testing the GUI and
-      the user interaction on the piTFT to troubleshoot any outstanding issues.</p>
+      ultimately play 2048. We tested the GUI using our local computers, initializing the size of the pygame window to
+      the size of the piTFT screen in order to simulate the user playing the game using the piTFT and to allow for quick
+      feedback and turn around time. Each change that was made on the GUI was then checked by running the game in the
+      pygame window to ensure that the change worked and that we could safely move to implementing the next feature of
+      the GUI. This process allowed us to catch any errors quickly and prevent them from creating issues with the next
+      features implemented. After ensuring that the GUI properly worked on our local computers, we then began testing
+      the GUI and the user interaction on the piTFT to troubleshoot any outstanding issues. After the completion of
+      extensively testing the GUI on both our local computers as well as the piTFT, we were able to ensure the
+      correctness of our GUI implementation.</p>
 
     <hr id='results'>
 
@@ -578,19 +604,19 @@
     <div class="row" style="text-align:center;">
       <h2>Work Distribution</h2>
       <div style="text-align:center;">
-        <img class="img-rounded" src="img/group.jpg" alt="Generic placeholder image" style="width:80%;">
+        <img class="img-rounded" src="img/group.jpg" alt="Generic placeholder image" style="width:50%;">
         <h4>Project group picture</h4>
       </div>
       <div class="col-md-6" style="font-size:16px">
-        <img class="img-rounded" src="img/a.png" alt="Generic placeholder image" width="240" height="240">
+        <img class="img-rounded" src="img/zak.jpg" alt="Generic placeholder image" height="240">
         <h3>Zak</h3>
-        <p class="lead">zak33@cornell.edu</p>
+        <p class=" lead">zak33@cornell.edu</p>
         <p>Developed the game logic, backend, and setup website.
       </div>
       <div class="col-md-6" style="font-size:16px">
-        <img class="img-rounded" src="img/b.png" alt="Generic placeholder image" width="240" height="240">
+        <img class="img-rounded" src="img/nadia.jpg" alt="Generic placeholder image" height="240">
         <h3>Nadia</h3>
-        <p class="lead">nnb28@cornell.edu</p>
+        <p class=" lead">nnb28@cornell.edu</p>
         <p>Developed the GUI and integration with GPIO; described these in lab report.
       </div>
     </div>
@@ -732,7 +758,7 @@ URL <span style="color: #333333">=</span> <span style="background-color: #fff0f0
 <span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">User</span>:
 
     <span style="color: #888888"># Attempt to login with the provided credentials.</span>
-    <span style="color: #888888"># Raises `InvalidCredentialsError` if they are invalid</span>
+    <span style="color: #888888"># Raises <code>InvalidCredentialsError</code> if they are invalid</span>
     <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">__init__</span>(<span style="color: #007020">self</span>, username, password):
         body <span style="color: #333333">=</span> {<span style="background-color: #fff0f0">&#39;username&#39;</span>: username, <span style="background-color: #fff0f0">&#39;password&#39;</span>: password}
         resp <span style="color: #333333">=</span> requests<span style="color: #333333">.</span>post(f<span style="background-color: #fff0f0">&#39;{URL}/login&#39;</span>, json<span style="color: #333333">=</span>body)
@@ -996,7 +1022,7 @@ type User <span style="color: #333333">=</span> {
 <span style="color: #888888"> * Get the high score of a user</span>
 <span style="color: #888888"> * </span>
 <span style="color: #888888"> * @param username the user&#39;s name</span>
-<span style="color: #888888"> * @returns The high score of user with username `username`</span>
+<span style="color: #888888"> * @returns The high score of user with username <code>username</code></span>
 <span style="color: #888888"> */</span>
 <span style="color: #008800; font-weight: bold">export</span> <span style="color: #008800; font-weight: bold">const</span> highScore <span style="color: #333333">=</span> async (username: <span style="color: #333399; font-weight: bold">string</span>)<span style="color: #333333">:</span> Promise<span style="color: #333333">&lt;</span><span style="color: #333399; font-weight: bold">number</span><span style="color: #333333">&gt;</span> <span style="color: #333333">=&gt;</span> {
   <span style="color: #008800; font-weight: bold">const</span> docRef <span style="color: #333333">=</span> users.doc(username);
@@ -1012,7 +1038,7 @@ type User <span style="color: #333333">=</span> {
 <span style="color: #888888"> * Get an array of ranked high scores</span>
 <span style="color: #888888"> * </span>
 <span style="color: #888888"> * @param max The maximum number of scores to return</span>
-<span style="color: #888888"> * @returns At most `max` high scores</span>
+<span style="color: #888888"> * @returns At most <code>max</code> high scores</span>
 <span style="color: #888888"> */</span>
 <span style="color: #008800; font-weight: bold">export</span> <span style="color: #008800; font-weight: bold">const</span> highScores <span style="color: #333333">=</span> async (max?: <span style="color: #333399; font-weight: bold">number</span>)<span style="color: #333333">:</span> Promise<span style="color: #333333">&lt;</span><span style="color: #007020">Array</span><span style="color: #333333">&lt;</span>{ username: <span style="color: #333399; font-weight: bold">string</span>; score: <span style="color: #333399; font-weight: bold">number</span> }<span style="color: #333333">&gt;&gt;</span> <span style="color: #333333">=&gt;</span> {
   <span style="color: #888888">// User all users in descending order of high score</span>
@@ -1403,7 +1429,216 @@ app.listen(port, () <span style="color: #333333">=&gt;</span> {
       <!-- HTML generated using hilite.me -->
       <div
         style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
-        <pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">pygame</span>
+        <pre style="margin: 0; line-height: 125%"><span style="color: #888888">#</span>
+  <span style="color: #888888"># zak33, nnb28, 5/17/23: game.py</span>
+  <span style="color: #888888"># </span>
+  <span style="color: #888888"># The main file to run 2048</span>
+  <span style="color: #888888">#</span>
+  <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">time</span>
+  <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">pygame</span>
+  <span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">pygame.locals</span> <span style="color: #008800; font-weight: bold">import</span> <span style="color: #333333">*</span>
+  <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">board</span>
+  <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">login_page</span>
+  <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">leaderboard_page</span>
+  <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">sys</span>
+  
+  <span style="color: #888888"># import for RPi</span>
+  <span style="color: #008800; font-weight: bold">try</span>:
+      <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">RPi.GPIO</span> <span style="color: #008800; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">GPIO</span>
+  <span style="color: #008800; font-weight: bold">except</span> <span style="color: #FF0000; font-weight: bold">ImportError</span>:
+      <span style="color: #008800; font-weight: bold">pass</span>
+  
+  pygame<span style="color: #333333">.</span>init()
+  
+  <span style="color: #888888"># constants for screen and colors</span>
+  size <span style="color: #333333">=</span> width, height <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">320</span>, <span style="color: #0000DD; font-weight: bold">240</span>
+  white <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">255</span>, <span style="color: #0000DD; font-weight: bold">255</span>, <span style="color: #0000DD; font-weight: bold">255</span>)
+  black <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">0</span>)
+  gray <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">169</span>, <span style="color: #0000DD; font-weight: bold">169</span>, <span style="color: #0000DD; font-weight: bold">169</span>)
+  screen <span style="color: #333333">=</span> pygame<span style="color: #333333">.</span>display<span style="color: #333333">.</span>set_mode(size)
+  clock <span style="color: #333333">=</span> pygame<span style="color: #333333">.</span>time<span style="color: #333333">.</span>Clock()
+  
+  <span style="color: #888888"># piTFT buttons to be used for playing</span>
+  BUTTONS <span style="color: #333333">=</span> [<span style="color: #0000DD; font-weight: bold">22</span>, <span style="color: #0000DD; font-weight: bold">27</span>, <span style="color: #0000DD; font-weight: bold">17</span>, <span style="color: #0000DD; font-weight: bold">23</span>]
+  
+  <span style="color: #888888"># When set to true, using the TFT</span>
+  TFT <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+  
+  <span style="color: #888888"># Setting up the buttons on the TFT</span>
+  <span style="color: #008800; font-weight: bold">if</span> TFT:
+      GPIO<span style="color: #333333">.</span>setmode(GPIO<span style="color: #333333">.</span>BCM)   <span style="color: #888888"># Set for GPIO (bcm) numbering not pin numbers...</span>
+      <span style="color: #008800; font-weight: bold">for</span> button <span style="color: #000000; font-weight: bold">in</span> BUTTONS:
+          GPIO<span style="color: #333333">.</span>setup(button, GPIO<span style="color: #333333">.</span>IN, pull_up_down<span style="color: #333333">=</span>GPIO<span style="color: #333333">.</span>PUD_UP)
+  
+  <span style="color: #888888"># Connecting the piTFT buttons to directions of shifting the board</span>
+  
+  
+  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">button_to_dir</span>(button):
+      <span style="color: #008800; font-weight: bold">if</span> button <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">17</span>:
+          <span style="color: #008800; font-weight: bold">return</span> board<span style="color: #333333">.</span>Dir<span style="color: #333333">.</span>UP
+      <span style="color: #008800; font-weight: bold">if</span> button <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">22</span>:
+          <span style="color: #008800; font-weight: bold">return</span> board<span style="color: #333333">.</span>Dir<span style="color: #333333">.</span>DOWN
+      <span style="color: #008800; font-weight: bold">if</span> button <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">23</span>:
+          <span style="color: #008800; font-weight: bold">return</span> board<span style="color: #333333">.</span>Dir<span style="color: #333333">.</span>LEFT
+      <span style="color: #008800; font-weight: bold">if</span> button <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">27</span>:
+          <span style="color: #008800; font-weight: bold">return</span> board<span style="color: #333333">.</span>Dir<span style="color: #333333">.</span>RIGHT
+      <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">None</span>
+  
+  
+  <span style="color: #888888"># Initializing the game board</span>
+  board_size <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">4</span>
+  game_board <span style="color: #333333">=</span> board<span style="color: #333333">.</span>Board()
+  game_board<span style="color: #333333">.</span>add_tile()
+  text_font <span style="color: #333333">=</span> game_board<span style="color: #333333">.</span>get_font(height, <span style="color: #0000DD; font-weight: bold">3</span>)
+  
+  <span style="color: #888888"># calculating the tile height based on proportions</span>
+  tile_height <span style="color: #333333">=</span> height <span style="color: #333333">//</span> (game_board<span style="color: #333333">.</span>side <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>)
+  tile_width <span style="color: #333333">=</span> width <span style="color: #333333">//</span> (game_board<span style="color: #333333">.</span>side <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>)
+  to_shift <span style="color: #333333">=</span> tile_width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>
+  
+  <span style="color: #888888"># initializes login page</span>
+  login <span style="color: #333333">=</span> login_page<span style="color: #333333">.</span>Login(width, height, text_font, {
+                           <span style="background-color: #fff0f0">&quot;white&quot;</span>: white, <span style="background-color: #fff0f0">&quot;black&quot;</span>: black, <span style="background-color: #fff0f0">&quot;gray&quot;</span>: gray})
+  
+  <span style="color: #888888"># initializes leaderboard page</span>
+  leaderboard <span style="color: #333333">=</span> leaderboard_page<span style="color: #333333">.</span>Leaderboard(width, height, text_font, white, <span style="color: #0000DD; font-weight: bold">7</span>)
+  
+  <span style="color: #888888"># puts text buttons (Score, New Game, Quit, Top Scores, Logout) into dict</span>
+  text_buttons <span style="color: #333333">=</span> [<span style="background-color: #fff0f0">&quot;Score: 0&quot;</span>, <span style="background-color: #fff0f0">&quot;New Game&quot;</span>, <span style="background-color: #fff0f0">&quot;Quit&quot;</span>, <span style="background-color: #fff0f0">&quot;Top Scores&quot;</span>, <span style="background-color: #fff0f0">&quot;Logout&quot;</span>]
+  text_buttons_dict <span style="color: #333333">=</span> []
+  <span style="color: #008800; font-weight: bold">for</span> i <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">range</span>(<span style="color: #007020">len</span>(text_buttons)):
+      text <span style="color: #333333">=</span> text_font<span style="color: #333333">.</span>render(text_buttons[i], <span style="color: #007020">True</span>, white)
+      rect <span style="color: #333333">=</span> text<span style="color: #333333">.</span>get_rect(centerx<span style="color: #333333">=</span>width <span style="color: #333333">-</span> tile_width <span style="color: #333333">+</span>
+                           to_shift, y<span style="color: #333333">=</span>i <span style="color: #333333">*</span> tile_height <span style="color: #333333">+</span> to_shift <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>)
+      text_buttons_dict<span style="color: #333333">.</span>append((text_buttons[i], (text, rect)))
+  text_buttons_dict <span style="color: #333333">=</span> <span style="color: #007020">dict</span>(text_buttons_dict)
+  <span style="color: #888888"># example format of dictionary</span>
+  <span style="color: #888888"># {&quot;Quit&quot; : (quit_text, quit_rect)}</span>
+  
+  <span style="color: #888888"># Connecting the keyboard buttons w, s, a, d buttons to directions of shifting the board</span>
+  
+  
+  <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">key_to_dir</span>(key):
+      <span style="color: #008800; font-weight: bold">if</span> key <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&#39;w&#39;</span>:
+          <span style="color: #008800; font-weight: bold">return</span> board<span style="color: #333333">.</span>Dir<span style="color: #333333">.</span>UP
+      <span style="color: #008800; font-weight: bold">if</span> key <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&#39;s&#39;</span>:
+          <span style="color: #008800; font-weight: bold">return</span> board<span style="color: #333333">.</span>Dir<span style="color: #333333">.</span>DOWN
+      <span style="color: #008800; font-weight: bold">if</span> key <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&#39;a&#39;</span>:
+          <span style="color: #008800; font-weight: bold">return</span> board<span style="color: #333333">.</span>Dir<span style="color: #333333">.</span>LEFT
+      <span style="color: #008800; font-weight: bold">if</span> key <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&#39;d&#39;</span>:
+          <span style="color: #008800; font-weight: bold">return</span> board<span style="color: #333333">.</span>Dir<span style="color: #333333">.</span>RIGHT
+      <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">None</span>
+  
+  
+  <span style="color: #888888"># Indicators of which screen you are viewing</span>
+  quit_clicked <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+  login_screen <span style="color: #333333">=</span> <span style="color: #007020">True</span>
+  topscores_clicked <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+  logout_clicked <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+  <span style="color: #888888"># indicates if the game is running</span>
+  running <span style="color: #333333">=</span> <span style="color: #007020">True</span>
+  <span style="color: #888888"># user to be initialized when logged in</span>
+  user <span style="color: #333333">=</span> <span style="color: #007020">None</span>
+  <span style="color: #008800; font-weight: bold">try</span>:
+      game_status <span style="color: #333333">=</span> (<span style="color: #007020">False</span>, <span style="background-color: #fff0f0">&quot;&quot;</span>)
+      <span style="color: #888888"># keep the game running iteratively</span>
+      <span style="color: #008800; font-weight: bold">while</span> running <span style="color: #000000; font-weight: bold">and</span> <span style="color: #000000; font-weight: bold">not</span> quit_clicked:
+          <span style="color: #888888"># clear the screen to draw new components</span>
+          screen<span style="color: #333333">.</span>fill(black)
+          <span style="color: #888888"># things to do based on which screen user is on</span>
+          <span style="color: #008800; font-weight: bold">if</span> login_screen:
+              <span style="color: #888888"># draw login screen</span>
+              login<span style="color: #333333">.</span>draw(screen)
+              <span style="color: #888888"># log the user in</span>
+              user <span style="color: #333333">=</span> login<span style="color: #333333">.</span>handle_events()
+              <span style="color: #888888"># if user is logged in, navigate to new screen</span>
+              login_screen <span style="color: #333333">=</span> user <span style="color: #000000; font-weight: bold">is</span> <span style="color: #007020">None</span>
+          <span style="color: #008800; font-weight: bold">elif</span> logout_clicked:
+              <span style="color: #888888"># navigate from game screen to logout screen</span>
+              <span style="color: #888888"># re-initialize game board and user</span>
+              logout_clicked <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+              login_screen <span style="color: #333333">=</span> <span style="color: #007020">True</span>
+              user <span style="color: #333333">=</span> <span style="color: #007020">None</span>
+              game_board <span style="color: #333333">=</span> board<span style="color: #333333">.</span>Board()
+              game_board<span style="color: #333333">.</span>add_tile()
+          <span style="color: #008800; font-weight: bold">elif</span> topscores_clicked:
+              <span style="color: #888888"># draw leaderboard</span>
+              leaderboard<span style="color: #333333">.</span>draw(screen, clock, width, height, text_font, white)
+              <span style="color: #888888"># if back button clicked, navigate to new screen</span>
+              topscores_clicked <span style="color: #333333">=</span> <span style="color: #000000; font-weight: bold">not</span> leaderboard<span style="color: #333333">.</span>handle_events()
+          <span style="color: #008800; font-weight: bold">else</span>:
+              <span style="color: #888888"># in the game screen</span>
+              <span style="color: #007020">dir</span> <span style="color: #333333">=</span> <span style="color: #007020">None</span>
+              <span style="color: #888888"># find which button clicked on the piTFT</span>
+              <span style="color: #008800; font-weight: bold">if</span> TFT:
+                  <span style="color: #008800; font-weight: bold">for</span> button <span style="color: #000000; font-weight: bold">in</span> BUTTONS:
+                      <span style="color: #008800; font-weight: bold">if</span> <span style="color: #000000; font-weight: bold">not</span> GPIO<span style="color: #333333">.</span>input(button):
+                          <span style="color: #007020">dir</span> <span style="color: #333333">=</span> button_to_dir(button)
+              <span style="color: #888888"># display the screen side buttons</span>
+              <span style="color: #008800; font-weight: bold">for</span> text, rect <span style="color: #000000; font-weight: bold">in</span> text_buttons_dict<span style="color: #333333">.</span>values():
+                  screen<span style="color: #333333">.</span>blit(text, rect)
+              <span style="color: #888888"># draw the 2048 board</span>
+              game_board<span style="color: #333333">.</span>draw(screen, width, height)
+              <span style="color: #888888"># check for events</span>
+              <span style="color: #008800; font-weight: bold">for</span> event <span style="color: #000000; font-weight: bold">in</span> pygame<span style="color: #333333">.</span>event<span style="color: #333333">.</span>get():
+                  <span style="color: #888888"># if key pressed, associate it with a direction</span>
+                  <span style="color: #008800; font-weight: bold">if</span> event<span style="color: #333333">.</span>type <span style="color: #333333">==</span> KEYDOWN:
+                      <span style="color: #007020">dir</span> <span style="color: #333333">=</span> key_to_dir(event<span style="color: #333333">.</span>unicode)
+  
+                  <span style="color: #888888"># if mouse clicked, check if buttons on screen clicked</span>
+                  <span style="color: #008800; font-weight: bold">if</span> event<span style="color: #333333">.</span>type <span style="color: #333333">==</span> MOUSEBUTTONDOWN:
+                      quit_clicked <span style="color: #333333">=</span> text_buttons_dict[<span style="background-color: #fff0f0">&quot;Quit&quot;</span>][<span style="color: #0000DD; font-weight: bold">1</span>]<span style="color: #333333">.</span>collidepoint(
+                          event<span style="color: #333333">.</span>pos)
+                      new_game_clicked <span style="color: #333333">=</span> text_buttons_dict[<span style="background-color: #fff0f0">&quot;New Game&quot;</span>][<span style="color: #0000DD; font-weight: bold">1</span>]<span style="color: #333333">.</span>collidepoint(
+                          event<span style="color: #333333">.</span>pos)
+                      topscores_clicked <span style="color: #333333">=</span> text_buttons_dict[<span style="background-color: #fff0f0">&quot;Top Scores&quot;</span>][<span style="color: #0000DD; font-weight: bold">1</span>]<span style="color: #333333">.</span>collidepoint(
+                          event<span style="color: #333333">.</span>pos)
+                      logout_clicked <span style="color: #333333">=</span> text_buttons_dict[<span style="background-color: #fff0f0">&quot;Logout&quot;</span>][<span style="color: #0000DD; font-weight: bold">1</span>]<span style="color: #333333">.</span>collidepoint(
+                          event<span style="color: #333333">.</span>pos)
+                      <span style="color: #888888"># re-initializing game if new game button clicked</span>
+                      <span style="color: #008800; font-weight: bold">if</span> new_game_clicked:
+                          <span style="color: #888888"># set score to zero</span>
+                          score_text <span style="color: #333333">=</span> text_font<span style="color: #333333">.</span>render(
+                              <span style="background-color: #fff0f0">&quot;Score: 0&quot;</span>, <span style="color: #007020">True</span>, white)
+                          score_rect <span style="color: #333333">=</span> score_text<span style="color: #333333">.</span>get_rect(centerx<span style="color: #333333">=</span>width <span style="color: #333333">-</span> tile_width <span style="color: #333333">+</span>
+                                                           to_shift, y<span style="color: #333333">=</span>to_shift <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>)
+                          text_buttons_dict[<span style="background-color: #fff0f0">&quot;Score&quot;</span>] <span style="color: #333333">=</span> (
+                              score_text, score_rect)
+                          <span style="color: #888888"># make new board</span>
+                          game_board <span style="color: #333333">=</span> board<span style="color: #333333">.</span>Board()
+                          <span style="color: #888888"># add tile to start game</span>
+                          game_board<span style="color: #333333">.</span>add_tile()
+              <span style="color: #888888"># if key corresponded to direction, then shift the board</span>
+              <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">dir</span> <span style="color: #000000; font-weight: bold">is</span> <span style="color: #000000; font-weight: bold">not</span> <span style="color: #007020">None</span>:
+                  <span style="color: #008800; font-weight: bold">if</span> game_board<span style="color: #333333">.</span>shift(<span style="color: #007020">dir</span>):
+                      <span style="color: #888888"># shift board and add new tile</span>
+                      game_board<span style="color: #333333">.</span>add_tile()
+                      <span style="color: #888888"># change score based on tile collisions</span>
+                      <span style="color: #888888"># display updated score</span>
+                      score_text <span style="color: #333333">=</span> text_font<span style="color: #333333">.</span>render(
+                          <span style="background-color: #fff0f0">&quot;Score: &quot;</span> <span style="color: #333333">+</span> <span style="color: #007020">str</span>(game_board<span style="color: #333333">.</span>score), <span style="color: #007020">True</span>, white)
+                      score_rect <span style="color: #333333">=</span> score_text<span style="color: #333333">.</span>get_rect(centerx<span style="color: #333333">=</span>width <span style="color: #333333">-</span> tile_width <span style="color: #333333">+</span>
+                                                       to_shift, y<span style="color: #333333">=</span>to_shift <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>)
+                      text_buttons_dict[<span style="background-color: #fff0f0">&quot;Score: 0&quot;</span>] <span style="color: #333333">=</span> (
+                          score_text, score_rect)
+          pygame<span style="color: #333333">.</span>display<span style="color: #333333">.</span>flip()
+          clock<span style="color: #333333">.</span>tick(<span style="color: #0000DD; font-weight: bold">60</span>)
+  <span style="color: #008800; font-weight: bold">finally</span>:
+      <span style="color: #888888"># clean up and end if game is over</span>
+      pygame<span style="color: #333333">.</span>quit()
+      GPIO<span style="color: #333333">.</span>cleanup()
+  </pre>
+      </div>
+      <h3>board.py</h3>
+      <!-- HTML generated using hilite.me -->
+      <div
+        style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+        <pre style="margin: 0; line-height: 125%"><span style="color: #888888">#</span>
+<span style="color: #888888"># zak33, nnb28, 5/17/23: leaderboard_page.py</span>
+<span style="color: #888888"># </span>
+<span style="color: #888888"># The game logic and GUI for the game board of 2048</span>
+<span style="color: #888888">#</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">pygame</span>
 <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">numpy</span> <span style="color: #008800; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">np</span>
 <span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">enum</span> <span style="color: #008800; font-weight: bold">import</span> Enum
 <span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">enum</span>
@@ -1634,6 +1869,226 @@ tile_colors <span style="color: #333333">=</span> [tile_empty, tile_2, tile_4, t
             <span style="color: #008800; font-weight: bold">return</span> (<span style="color: #007020">False</span>, <span style="background-color: #fff0f0">&quot;&quot;</span>)
         <span style="color: #008800; font-weight: bold">else</span>:
             <span style="color: #008800; font-weight: bold">return</span> (<span style="color: #007020">True</span>, <span style="background-color: #fff0f0">&quot;You Lost&quot;</span>)
+</pre>
+      </div>
+      <h3>leaderboard_page.py</h3>
+      <!-- HTML generated using hilite.me -->
+      <div
+        style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+        <pre style="margin: 0; line-height: 125%"><span style="color: #888888">#</span>
+<span style="color: #888888"># zak33, nnb28, 5/17/23: leaderboard_page.py</span>
+<span style="color: #888888">#</span>
+<span style="color: #888888"># Interacts with API to display the top scores using pygame and handles user</span>
+<span style="color: #888888"># events</span>
+<span style="color: #888888">#</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">time</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">pygame</span>
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">pygame.locals</span> <span style="color: #008800; font-weight: bold">import</span> <span style="color: #333333">*</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">board</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">api</span>
+
+pygame<span style="color: #333333">.</span>init()
+
+<span style="color: #888888"># Represents the Leaderboard in 2048</span>
+
+
+<span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">Leaderboard</span>:
+    <span style="color: #888888"># creates new leaderboard</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">__init__</span>(<span style="color: #007020">self</span>, width, height, font, font_color, limit):
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>back_text <span style="color: #333333">=</span> font<span style="color: #333333">.</span>render(<span style="background-color: #fff0f0">&quot;Back&quot;</span>, <span style="color: #007020">True</span>, font_color)
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>back_rect <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>back_text<span style="color: #333333">.</span>get_rect(
+            centerx<span style="color: #333333">=</span>width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>, y<span style="color: #333333">=</span>height <span style="color: #333333">-</span> (height <span style="color: #333333">//</span> limit))
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>limit <span style="color: #333333">=</span> limit
+
+    <span style="color: #888888"># handles user interaction events with the screen</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">handle_events</span>(<span style="color: #007020">self</span>):
+        back_clicked <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+        <span style="color: #888888"># check to see if back button clicked</span>
+        <span style="color: #008800; font-weight: bold">for</span> event <span style="color: #000000; font-weight: bold">in</span> pygame<span style="color: #333333">.</span>event<span style="color: #333333">.</span>get():
+            <span style="color: #008800; font-weight: bold">if</span> event<span style="color: #333333">.</span>type <span style="color: #333333">==</span> pygame<span style="color: #333333">.</span>MOUSEBUTTONDOWN:
+                back_clicked <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>back_rect<span style="color: #333333">.</span>collidepoint(event<span style="color: #333333">.</span>pos)
+        <span style="color: #008800; font-weight: bold">return</span> back_clicked
+
+    <span style="color: #888888"># draws the leaderboard on the screen with pygame</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">draw</span>(<span style="color: #007020">self</span>, screen, clock, width, height, font, font_color):
+        <span style="color: #888888"># get limit number of scores from api</span>
+        all_scores <span style="color: #333333">=</span> api<span style="color: #333333">.</span>all_high_scores(limit<span style="color: #333333">=</span><span style="color: #007020">self</span><span style="color: #333333">.</span>limit)
+        i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+        <span style="color: #888888"># loop through all scores</span>
+        <span style="color: #008800; font-weight: bold">for</span> place <span style="color: #000000; font-weight: bold">in</span> all_scores:
+            <span style="color: #888888"># display the place number (first, second, third place...)</span>
+            place_text <span style="color: #333333">=</span> font<span style="color: #333333">.</span>render(<span style="color: #007020">str</span>(i <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>), <span style="color: #007020">True</span>, font_color)
+            place_rect <span style="color: #333333">=</span> place_text<span style="color: #333333">.</span>get_rect(
+                centerx<span style="color: #333333">=</span>width<span style="color: #333333">//</span><span style="color: #0000DD; font-weight: bold">8</span>, y<span style="color: #333333">=</span>((height <span style="color: #333333">-</span> (height <span style="color: #333333">//</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>limit)) <span style="color: #333333">*</span> i <span style="color: #333333">//</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>limit <span style="color: #333333">+</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>limit))
+            screen<span style="color: #333333">.</span>blit(place_text, place_rect)
+            <span style="color: #888888"># display username of the user at this place</span>
+            username_text <span style="color: #333333">=</span> font<span style="color: #333333">.</span>render(
+                place[<span style="background-color: #fff0f0">&quot;username&quot;</span>], <span style="color: #007020">True</span>, font_color)
+            username_rect <span style="color: #333333">=</span> username_text<span style="color: #333333">.</span>get_rect(
+                centerx<span style="color: #333333">=</span>width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">4</span>, y<span style="color: #333333">=</span>((height <span style="color: #333333">-</span> (height <span style="color: #333333">//</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>limit)) <span style="color: #333333">*</span> i <span style="color: #333333">//</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>limit <span style="color: #333333">+</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>limit))
+            <span style="color: #888888"># display the highest score of the user at this place</span>
+            score_text <span style="color: #333333">=</span> font<span style="color: #333333">.</span>render(<span style="color: #007020">str</span>(place[<span style="background-color: #fff0f0">&quot;score&quot;</span>]), <span style="color: #007020">True</span>, font_color)
+            score_rect <span style="color: #333333">=</span> score_text<span style="color: #333333">.</span>get_rect(
+                centerx<span style="color: #333333">=</span>width <span style="color: #333333">*</span> <span style="color: #0000DD; font-weight: bold">3</span> <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">4</span>, y<span style="color: #333333">=</span>(height <span style="color: #333333">-</span> (height <span style="color: #333333">//</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>limit)) <span style="color: #333333">*</span> i <span style="color: #333333">//</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>limit <span style="color: #333333">+</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>limit)
+            screen<span style="color: #333333">.</span>blit(username_text, username_rect)
+            screen<span style="color: #333333">.</span>blit(score_text, score_rect)
+            i <span style="color: #333333">=</span> i <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>
+        <span style="color: #888888"># display the back button</span>
+        screen<span style="color: #333333">.</span>blit(<span style="color: #007020">self</span><span style="color: #333333">.</span>back_text, <span style="color: #007020">self</span><span style="color: #333333">.</span>back_rect)
+</pre>
+      </div>
+      <h3>login_page.py</h3>
+      <!-- HTML generated using hilite.me -->
+      <div
+        style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+        <pre style="margin: 0; line-height: 125%"><span style="color: #888888">#</span>
+<span style="color: #888888"># zak33, nnb28, 5/17/23: login_page.py</span>
+<span style="color: #888888">#</span>
+<span style="color: #888888"># Interacts with API to login users and/or create accounts</span>
+<span style="color: #888888">#</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">time</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">pygame</span>
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">pygame.locals</span> <span style="color: #008800; font-weight: bold">import</span> <span style="color: #333333">*</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">board</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">api</span>
+
+pygame<span style="color: #333333">.</span>init()
+
+<span style="color: #888888"># Represents the Login in 2048</span>
+
+
+<span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">Login</span>:
+    <span style="color: #888888"># initialize the login screen components</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">__init__</span>(<span style="color: #007020">self</span>, width, height, font, colors):
+        <span style="color: #888888"># initialize the mouse click events to false</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>login_clicked <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>create_clicked <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>username_clicked <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>password_clicked <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>create_success <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>login_failed <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+
+        <span style="color: #888888"># login / create account screen</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>width <span style="color: #333333">=</span> width
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>height <span style="color: #333333">=</span> height
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>colors <span style="color: #333333">=</span> colors
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>font <span style="color: #333333">=</span> font
+
+        <span style="color: #888888"># username / password text boxes</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>username_text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;&#39;</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>username_rect <span style="color: #333333">=</span> pygame<span style="color: #333333">.</span>Rect(
+            width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">4</span>, height <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">6</span>, width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>, <span style="color: #0000DD; font-weight: bold">32</span>)
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>password_text <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;&#39;</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>password_rect <span style="color: #333333">=</span> pygame<span style="color: #333333">.</span>Rect(
+            width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">4</span>, height <span style="color: #333333">*</span> <span style="color: #0000DD; font-weight: bold">2</span> <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">6</span>, width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>, <span style="color: #0000DD; font-weight: bold">32</span>)
+
+        <span style="color: #888888"># login button</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>login_text <span style="color: #333333">=</span> font<span style="color: #333333">.</span>render(<span style="background-color: #fff0f0">&quot;Login&quot;</span>, <span style="color: #007020">True</span>, colors[<span style="background-color: #fff0f0">&quot;white&quot;</span>])
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>login_rect <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>login_text<span style="color: #333333">.</span>get_rect(
+            centerx<span style="color: #333333">=</span>width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>, y<span style="color: #333333">=</span>height <span style="color: #333333">*</span> <span style="color: #0000DD; font-weight: bold">3</span> <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">6</span>)
+
+        <span style="color: #888888"># create account button</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>create_text <span style="color: #333333">=</span> font<span style="color: #333333">.</span>render(<span style="background-color: #fff0f0">&quot;Create Account&quot;</span>, <span style="color: #007020">True</span>, colors[<span style="background-color: #fff0f0">&quot;white&quot;</span>])
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>create_rect <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>create_text<span style="color: #333333">.</span>get_rect(
+            centerx<span style="color: #333333">=</span>width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>, y<span style="color: #333333">=</span>height <span style="color: #333333">*</span> <span style="color: #0000DD; font-weight: bold">4</span> <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">6</span>)
+
+        <span style="color: #888888"># success text for creating account</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>success_text <span style="color: #333333">=</span> font<span style="color: #333333">.</span>render(<span style="background-color: #fff0f0">&quot;Success!&quot;</span>, <span style="color: #007020">True</span>, colors[<span style="background-color: #fff0f0">&quot;white&quot;</span>])
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>success_rect <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>success_text<span style="color: #333333">.</span>get_rect(
+            centerx<span style="color: #333333">=</span>width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>, y<span style="color: #333333">=</span>(height <span style="color: #333333">*</span> <span style="color: #0000DD; font-weight: bold">5</span> <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">6</span>))
+
+        <span style="color: #888888"># failed login</span>
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>login_failed_text <span style="color: #333333">=</span> font<span style="color: #333333">.</span>render(
+            <span style="background-color: #fff0f0">&quot;Incorrect username or password&quot;</span>, <span style="color: #007020">True</span>, colors[<span style="background-color: #fff0f0">&quot;white&quot;</span>])
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>login_failed_rect <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>login_failed_text<span style="color: #333333">.</span>get_rect(
+            centerx<span style="color: #333333">=</span>width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>, y<span style="color: #333333">=</span>(height <span style="color: #333333">*</span> <span style="color: #0000DD; font-weight: bold">5</span> <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">6</span>))
+
+    <span style="color: #888888"># draws the login screen</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">draw</span>(<span style="color: #007020">self</span>, screen):
+        <span style="color: #888888"># username text box</span>
+        username_box_color <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>colors[<span style="background-color: #fff0f0">&quot;gray&quot;</span>] <span style="color: #008800; font-weight: bold">if</span> <span style="color: #000000; font-weight: bold">not</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>username_clicked <span style="color: #008800; font-weight: bold">else</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>colors[<span style="background-color: #fff0f0">&quot;white&quot;</span>]
+        <span style="color: #888888"># draw username textbox</span>
+        pygame<span style="color: #333333">.</span>draw<span style="color: #333333">.</span>rect(screen, username_box_color, <span style="color: #007020">self</span><span style="color: #333333">.</span>username_rect)
+        <span style="color: #888888"># display the current username text entered</span>
+        username_surface <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>font<span style="color: #333333">.</span>render(
+            <span style="color: #007020">self</span><span style="color: #333333">.</span>username_text, <span style="color: #007020">True</span>, <span style="color: #007020">self</span><span style="color: #333333">.</span>colors[<span style="background-color: #fff0f0">&quot;black&quot;</span>])
+        screen<span style="color: #333333">.</span>blit(username_surface,
+                    (<span style="color: #007020">self</span><span style="color: #333333">.</span>username_rect<span style="color: #333333">.</span>x<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">5</span>, <span style="color: #007020">self</span><span style="color: #333333">.</span>username_rect<span style="color: #333333">.</span>y<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">5</span>))
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>username_rect<span style="color: #333333">.</span>w <span style="color: #333333">=</span> <span style="color: #007020">max</span>(
+            <span style="color: #007020">self</span><span style="color: #333333">.</span>width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>, username_surface<span style="color: #333333">.</span>get_width()<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">10</span>)
+
+        <span style="color: #888888"># password text box</span>
+        password_box_color <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>colors[<span style="background-color: #fff0f0">&quot;gray&quot;</span>] <span style="color: #008800; font-weight: bold">if</span> <span style="color: #000000; font-weight: bold">not</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>password_clicked <span style="color: #008800; font-weight: bold">else</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>colors[<span style="background-color: #fff0f0">&quot;white&quot;</span>]
+        <span style="color: #888888"># draw password textbox</span>
+        pygame<span style="color: #333333">.</span>draw<span style="color: #333333">.</span>rect(screen, password_box_color, <span style="color: #007020">self</span><span style="color: #333333">.</span>password_rect)
+        <span style="color: #888888"># display the current password text entered</span>
+        password_surface <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>font<span style="color: #333333">.</span>render(
+            <span style="color: #007020">self</span><span style="color: #333333">.</span>password_text, <span style="color: #007020">True</span>, <span style="color: #007020">self</span><span style="color: #333333">.</span>colors[<span style="background-color: #fff0f0">&quot;black&quot;</span>])
+        screen<span style="color: #333333">.</span>blit(password_surface,
+                    (<span style="color: #007020">self</span><span style="color: #333333">.</span>password_rect<span style="color: #333333">.</span>x<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">5</span>, <span style="color: #007020">self</span><span style="color: #333333">.</span>password_rect<span style="color: #333333">.</span>y<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">5</span>))
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>password_rect<span style="color: #333333">.</span>w <span style="color: #333333">=</span> <span style="color: #007020">max</span>(
+            <span style="color: #007020">self</span><span style="color: #333333">.</span>width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>, password_surface<span style="color: #333333">.</span>get_width()<span style="color: #333333">+</span><span style="color: #0000DD; font-weight: bold">10</span>)
+
+        <span style="color: #888888"># login button</span>
+        screen<span style="color: #333333">.</span>blit(<span style="color: #007020">self</span><span style="color: #333333">.</span>login_text, <span style="color: #007020">self</span><span style="color: #333333">.</span>login_rect)
+        <span style="color: #888888"># create account button</span>
+        screen<span style="color: #333333">.</span>blit(<span style="color: #007020">self</span><span style="color: #333333">.</span>create_text, <span style="color: #007020">self</span><span style="color: #333333">.</span>create_rect)
+        <span style="color: #888888"># if success at creating account, display &#39;success&#39; message</span>
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>create_success:
+            screen<span style="color: #333333">.</span>blit(<span style="color: #007020">self</span><span style="color: #333333">.</span>success_text, <span style="color: #007020">self</span><span style="color: #333333">.</span>success_rect)
+        <span style="color: #008800; font-weight: bold">elif</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>login_failed:
+            screen<span style="color: #333333">.</span>blit(<span style="color: #007020">self</span><span style="color: #333333">.</span>login_failed_text,
+                        <span style="color: #007020">self</span><span style="color: #333333">.</span>login_failed_rect)
+
+    <span style="color: #888888"># handles mousebutton and keyboard press events</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">handle_events</span>(<span style="color: #007020">self</span>):
+        <span style="color: #888888"># loop through every event detected</span>
+        <span style="color: #008800; font-weight: bold">for</span> event <span style="color: #000000; font-weight: bold">in</span> pygame<span style="color: #333333">.</span>event<span style="color: #333333">.</span>get():
+            <span style="color: #888888"># check mouse clicks</span>
+            <span style="color: #008800; font-weight: bold">if</span> event<span style="color: #333333">.</span>type <span style="color: #333333">==</span> pygame<span style="color: #333333">.</span>MOUSEBUTTONDOWN:
+                <span style="color: #888888"># check if username, password, login, or create account clicked</span>
+                <span style="color: #007020">self</span><span style="color: #333333">.</span>username_clicked <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>username_rect<span style="color: #333333">.</span>collidepoint(
+                    event<span style="color: #333333">.</span>pos)
+                <span style="color: #007020">self</span><span style="color: #333333">.</span>password_clicked <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>password_rect<span style="color: #333333">.</span>collidepoint(
+                    event<span style="color: #333333">.</span>pos)
+                <span style="color: #007020">self</span><span style="color: #333333">.</span>login_clicked <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>login_rect<span style="color: #333333">.</span>collidepoint(event<span style="color: #333333">.</span>pos)
+                <span style="color: #888888"># if login clicked, verify user with API</span>
+                <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>login_clicked:
+                    <span style="color: #008800; font-weight: bold">try</span>:
+                        user <span style="color: #333333">=</span> api<span style="color: #333333">.</span>User(<span style="color: #007020">self</span><span style="color: #333333">.</span>username_text, <span style="color: #007020">self</span><span style="color: #333333">.</span>password_text)
+                        <span style="color: #007020">self</span><span style="color: #333333">.</span>login_success <span style="color: #333333">=</span> <span style="color: #007020">True</span>
+                        <span style="color: #008800; font-weight: bold">return</span> user
+                    <span style="color: #888888"># if invalid user, don&#39;t log in</span>
+                    <span style="color: #008800; font-weight: bold">except</span> api<span style="color: #333333">.</span>InvalidCredentialsError:
+                        <span style="color: #007020">self</span><span style="color: #333333">.</span>login_clicked <span style="color: #333333">=</span> <span style="color: #007020">False</span>
+                        <span style="color: #007020">self</span><span style="color: #333333">.</span>login_failed <span style="color: #333333">=</span> <span style="color: #007020">True</span>
+                        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">None</span>
+                <span style="color: #007020">self</span><span style="color: #333333">.</span>create_clicked <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>create_rect<span style="color: #333333">.</span>collidepoint(event<span style="color: #333333">.</span>pos)
+                <span style="color: #888888"># if create account clicked, create using API</span>
+                <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>create_clicked:
+                    <span style="color: #007020">self</span><span style="color: #333333">.</span>create_success <span style="color: #333333">=</span> api<span style="color: #333333">.</span>create_account(
+                        <span style="color: #007020">self</span><span style="color: #333333">.</span>username_text, <span style="color: #007020">self</span><span style="color: #333333">.</span>password_text)
+            <span style="color: #888888"># check keyboard clicks</span>
+            <span style="color: #008800; font-weight: bold">if</span> event<span style="color: #333333">.</span>type <span style="color: #333333">==</span> pygame<span style="color: #333333">.</span>KEYDOWN:
+
+                <span style="color: #888888"># Check for backspace</span>
+                <span style="color: #008800; font-weight: bold">if</span> event<span style="color: #333333">.</span>key <span style="color: #333333">==</span> pygame<span style="color: #333333">.</span>K_BACKSPACE:
+
+                    <span style="color: #888888"># get text input from 0 to -1 i.e. end.</span>
+                    <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>username_clicked:
+                        <span style="color: #007020">self</span><span style="color: #333333">.</span>username_text <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>username_text[:<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>]
+                    <span style="color: #008800; font-weight: bold">elif</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>password_clicked:
+                        <span style="color: #007020">self</span><span style="color: #333333">.</span>password_text <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>password_text[:<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>]
+
+                <span style="color: #888888"># Unicode standard is used for string</span>
+                <span style="color: #888888"># formation</span>
+                <span style="color: #008800; font-weight: bold">else</span>:
+                    <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>username_clicked:
+                        <span style="color: #007020">self</span><span style="color: #333333">.</span>username_text <span style="color: #333333">+=</span> event<span style="color: #333333">.</span>unicode
+                    <span style="color: #008800; font-weight: bold">elif</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>password_clicked:
+                        <span style="color: #007020">self</span><span style="color: #333333">.</span>password_text <span style="color: #333333">+=</span> event<span style="color: #333333">.</span>unicode
+
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">None</span>
 </pre>
       </div>
 
