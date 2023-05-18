@@ -1399,6 +1399,243 @@ app.listen(port, () <span style="color: #333333">=&gt;</span> {
           </tr>
         </table>
       </div>
+      <h3>game.py</h3>
+      <!-- HTML generated using hilite.me -->
+      <div
+        style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+        <pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">pygame</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">numpy</span> <span style="color: #008800; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">np</span>
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">enum</span> <span style="color: #008800; font-weight: bold">import</span> Enum
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">enum</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">random</span>
+
+
+<span style="color: #888888"># Represents a cardinal direction</span>
+<span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">Dir</span>(Enum):
+    UP <span style="color: #333333">=</span> enum<span style="color: #333333">.</span>auto()
+    DOWN <span style="color: #333333">=</span> enum<span style="color: #333333">.</span>auto()
+    LEFT <span style="color: #333333">=</span> enum<span style="color: #333333">.</span>auto()
+    RIGHT <span style="color: #333333">=</span> enum<span style="color: #333333">.</span>auto()
+
+    <span style="color: #888888"># Calculates the angle to 180 degrees, in units of 90 degrees</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">angle_to_left</span>(<span style="color: #007020">self</span>):
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">self</span> <span style="color: #333333">==</span> Dir<span style="color: #333333">.</span>UP:
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #0000DD; font-weight: bold">1</span>
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">self</span> <span style="color: #333333">==</span> Dir<span style="color: #333333">.</span>DOWN:
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">self</span> <span style="color: #333333">==</span> Dir<span style="color: #333333">.</span>LEFT:
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #0000DD; font-weight: bold">0</span>
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">self</span> <span style="color: #333333">==</span> Dir<span style="color: #333333">.</span>RIGHT:
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #0000DD; font-weight: bold">2</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">create_board</span>(side):
+    <span style="color: #008800; font-weight: bold">return</span> np<span style="color: #333333">.</span>zeros((side, side), <span style="color: #007020">int</span>)
+
+<span style="color: #888888"># Filter out the zero elements of a given array, leaving only the nonzero elements</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">filter_nonzeros</span>(arr):
+    nonzeros <span style="color: #333333">=</span> []
+    <span style="color: #008800; font-weight: bold">for</span> i <span style="color: #000000; font-weight: bold">in</span> arr:
+        <span style="color: #008800; font-weight: bold">if</span> i <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            nonzeros<span style="color: #333333">.</span>append(i)
+    <span style="color: #008800; font-weight: bold">return</span> nonzeros
+
+
+<span style="color: #888888"># Shifts a row left according to 2048 semantics and returns the resulting row</span>
+<span style="color: #888888"># Empty tiles are represented with zeros</span>
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">shift_row</span>(row):
+    nonzeros <span style="color: #333333">=</span> filter_nonzeros(row)
+    shifted_tiles <span style="color: #333333">=</span> []
+    i <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #008800; font-weight: bold">while</span> i <span style="color: #333333">&lt;</span> <span style="color: #007020">len</span>(nonzeros):
+        right_tile <span style="color: #333333">=</span> nonzeros[i]
+        left_tile <span style="color: #333333">=</span> nonzeros[i <span style="color: #333333">-</span> <span style="color: #0000DD; font-weight: bold">1</span>]
+        <span style="color: #888888"># Try to combine the tiles at index i - 1 and i</span>
+        <span style="color: #008800; font-weight: bold">if</span> left_tile <span style="color: #333333">==</span> right_tile:
+            <span style="color: #888888"># If we can merge the tiles, add a doubled tile to the result</span>
+            <span style="color: #888888"># and bump the index by 2 to consider the next unmerged tile</span>
+            shifted_tiles<span style="color: #333333">.</span>append(left_tile <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>)
+            i <span style="color: #333333">+=</span> <span style="color: #0000DD; font-weight: bold">2</span>
+        <span style="color: #008800; font-weight: bold">else</span>:
+            <span style="color: #888888"># Otherwise, we cannot merge the tile at index i,</span>
+            <span style="color: #888888"># so we append it to the result unchanged. We bump the counter by</span>
+            <span style="color: #888888"># 1 to try to merge the tiles at indices i and i + 1</span>
+            shifted_tiles<span style="color: #333333">.</span>append(left_tile)
+            i <span style="color: #333333">+=</span> <span style="color: #0000DD; font-weight: bold">1</span>
+    <span style="color: #888888"># If we did not merge the second to last and last tile, we have to add the</span>
+    <span style="color: #888888"># last tile unchanged to the result</span>
+    <span style="color: #008800; font-weight: bold">if</span> i <span style="color: #333333">==</span> <span style="color: #007020">len</span>(nonzeros):
+        shifted_tiles<span style="color: #333333">.</span>append(nonzeros[<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>])
+    <span style="color: #888888"># We pad the &quot;empty space&quot; created by merging and shifting tiles with empty tiles</span>
+    pad_length <span style="color: #333333">=</span> <span style="color: #007020">len</span>(row) <span style="color: #333333">-</span> <span style="color: #007020">len</span>(shifted_tiles)
+    <span style="color: #008800; font-weight: bold">return</span> np<span style="color: #333333">.</span>pad(np<span style="color: #333333">.</span>array(shifted_tiles, dtype<span style="color: #333333">=</span>np<span style="color: #333333">.</span>int64), (<span style="color: #0000DD; font-weight: bold">0</span>, pad_length), <span style="background-color: #fff0f0">&#39;constant&#39;</span>)
+
+<span style="color: #888888"># Shifts a matrix left according to the 2048 semantics</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">shift_left</span>(matrix):
+    <span style="color: #008800; font-weight: bold">return</span> np<span style="color: #333333">.</span>array([shift_row(row) <span style="color: #008800; font-weight: bold">for</span> row <span style="color: #000000; font-weight: bold">in</span> matrix])
+
+<span style="color: #888888"># Shifts a matrix in a given direction according to the 2048 semantics</span>
+
+
+<span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">shift</span>(matrix, <span style="color: #007020">dir</span>):
+    <span style="color: #888888"># Rotate the matrix so we shift left, and then rotate back</span>
+    angle <span style="color: #333333">=</span> <span style="color: #007020">dir</span><span style="color: #333333">.</span>angle_to_left()
+    <span style="color: #008800; font-weight: bold">return</span> np<span style="color: #333333">.</span>rot90(shift_left(np<span style="color: #333333">.</span>rot90(matrix, angle)), <span style="color: #333333">-</span>angle)
+
+
+<span style="color: #888888"># RGB of colors to be used in the game</span>
+white <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">255</span>, <span style="color: #0000DD; font-weight: bold">255</span>, <span style="color: #0000DD; font-weight: bold">255</span>)
+black <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">0</span>)
+gray <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">169</span>, <span style="color: #0000DD; font-weight: bold">169</span>, <span style="color: #0000DD; font-weight: bold">169</span>)
+tile_empty <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">204</span>, <span style="color: #0000DD; font-weight: bold">192</span>, <span style="color: #0000DD; font-weight: bold">179</span>)
+tile_2 <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">238</span>, <span style="color: #0000DD; font-weight: bold">228</span>, <span style="color: #0000DD; font-weight: bold">218</span>)
+tile_4 <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">237</span>, <span style="color: #0000DD; font-weight: bold">224</span>, <span style="color: #0000DD; font-weight: bold">200</span>)
+tile_8 <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">242</span>, <span style="color: #0000DD; font-weight: bold">177</span>, <span style="color: #0000DD; font-weight: bold">121</span>)
+tile_16 <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">245</span>, <span style="color: #0000DD; font-weight: bold">149</span>, <span style="color: #0000DD; font-weight: bold">99</span>)
+tile_32 <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">246</span>, <span style="color: #0000DD; font-weight: bold">124</span>, <span style="color: #0000DD; font-weight: bold">95</span>)
+tile_64 <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">246</span>, <span style="color: #0000DD; font-weight: bold">94</span>, <span style="color: #0000DD; font-weight: bold">59</span>)
+tile_128 <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">237</span>, <span style="color: #0000DD; font-weight: bold">207</span>, <span style="color: #0000DD; font-weight: bold">114</span>)
+tile_256 <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">237</span>, <span style="color: #0000DD; font-weight: bold">204</span>, <span style="color: #0000DD; font-weight: bold">97</span>)
+tile_512 <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">237</span>, <span style="color: #0000DD; font-weight: bold">200</span>, <span style="color: #0000DD; font-weight: bold">80</span>)
+tile_1024 <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">237</span>, <span style="color: #0000DD; font-weight: bold">197</span>, <span style="color: #0000DD; font-weight: bold">63</span>)
+tile_2048 <span style="color: #333333">=</span> (<span style="color: #0000DD; font-weight: bold">237</span>, <span style="color: #0000DD; font-weight: bold">194</span>, <span style="color: #0000DD; font-weight: bold">46</span>)
+
+<span style="color: #888888"># The index of the colors in here correspond to the tile value exponent</span>
+tile_colors <span style="color: #333333">=</span> [tile_empty, tile_2, tile_4, tile_8, tile_16, tile_32,
+               tile_64, tile_128, tile_256, tile_512, tile_1024, tile_2048]
+
+
+<span style="color: #888888"># Represents a 2048 board</span>
+<span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">Board</span>:
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">__init__</span>(<span style="color: #007020">self</span>, arg<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">4</span>):
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">isinstance</span>(arg, <span style="color: #007020">int</span>):
+            <span style="color: #888888"># initalize with side length</span>
+            <span style="color: #007020">self</span><span style="color: #333333">.</span>side <span style="color: #333333">=</span> arg
+            <span style="color: #007020">self</span><span style="color: #333333">.</span>board <span style="color: #333333">=</span> create_board(<span style="color: #007020">self</span><span style="color: #333333">.</span>side)
+        <span style="color: #008800; font-weight: bold">else</span>:
+            <span style="color: #888888"># initialize with matrix</span>
+            <span style="color: #007020">self</span><span style="color: #333333">.</span>side <span style="color: #333333">=</span> <span style="color: #007020">len</span>(arg)
+            <span style="color: #007020">self</span><span style="color: #333333">.</span>board <span style="color: #333333">=</span> np<span style="color: #333333">.</span>array(arg)
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>score <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">__str__</span>(<span style="color: #007020">self</span>):
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">str</span>(np<span style="color: #333333">.</span>array([[<span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #008800; font-weight: bold">if</span> i <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #008800; font-weight: bold">else</span> <span style="color: #0000DD; font-weight: bold">2</span> <span style="color: #333333">**</span> i <span style="color: #008800; font-weight: bold">for</span> i <span style="color: #000000; font-weight: bold">in</span> row] <span style="color: #008800; font-weight: bold">for</span> row <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>board]))
+
+    <span style="color: #888888"># Calculates the score difference of the new board and past board</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">score_difference</span>(<span style="color: #007020">self</span>, board):
+        tiles <span style="color: #333333">=</span> <span style="color: #007020">list</span>(board<span style="color: #333333">.</span>flatten())
+        <span style="color: #008800; font-weight: bold">for</span> tile <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>board<span style="color: #333333">.</span>flatten():
+            <span style="color: #008800; font-weight: bold">if</span> tile <span style="color: #000000; font-weight: bold">in</span> tiles:
+                tiles<span style="color: #333333">.</span>remove(tile)
+        score <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+        <span style="color: #008800; font-weight: bold">for</span> tile <span style="color: #000000; font-weight: bold">in</span> tiles:
+            <span style="color: #008800; font-weight: bold">if</span> tile <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+                score <span style="color: #333333">+=</span> <span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #333333">&lt;&lt;</span> tile
+        <span style="color: #008800; font-weight: bold">return</span> score
+
+    <span style="color: #888888"># Shift this 2048 board in place</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">shift</span>(<span style="color: #007020">self</span>, <span style="color: #007020">dir</span>: Dir):
+        shifted <span style="color: #333333">=</span> shift(<span style="color: #007020">self</span><span style="color: #333333">.</span>board, <span style="color: #007020">dir</span>)
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #000000; font-weight: bold">not</span> np<span style="color: #333333">.</span>array_equiv(shifted, <span style="color: #007020">self</span><span style="color: #333333">.</span>board):
+            <span style="color: #007020">self</span><span style="color: #333333">.</span>score <span style="color: #333333">+=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>score_difference(shifted)
+            <span style="color: #007020">self</span><span style="color: #333333">.</span>board <span style="color: #333333">=</span> shifted
+            <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">True</span>
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">False</span>
+
+    <span style="color: #888888"># Returns if the board can shift in direction dir or not</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">can_shift</span>(<span style="color: #007020">self</span>, <span style="color: #007020">dir</span>):
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #000000; font-weight: bold">not</span> np<span style="color: #333333">.</span>array_equal(<span style="color: #007020">self</span><span style="color: #333333">.</span>board, shift(<span style="color: #007020">self</span><span style="color: #333333">.</span>board, <span style="color: #007020">dir</span>))
+
+    <span style="color: #888888"># Returns the exponent (2**exponent) of the tile at location (i, j)</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">at</span>(<span style="color: #007020">self</span>, i, j):
+        <span style="color: #008800; font-weight: bold">return</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>board[i][j]
+
+    <span style="color: #888888"># Add a random tile (2 or 4) in random empty spot to the board</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">add_tile</span>(<span style="color: #007020">self</span>):
+        i <span style="color: #333333">=</span> random<span style="color: #333333">.</span>randrange(<span style="color: #007020">self</span><span style="color: #333333">.</span>side)
+        j <span style="color: #333333">=</span> random<span style="color: #333333">.</span>randrange(<span style="color: #007020">self</span><span style="color: #333333">.</span>side)
+        v <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #008800; font-weight: bold">if</span> random<span style="color: #333333">.</span>randint(<span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">1</span>) <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #008800; font-weight: bold">else</span> <span style="color: #0000DD; font-weight: bold">2</span>
+        <span style="color: #008800; font-weight: bold">while</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>at(i, j) <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">0</span>:
+            i <span style="color: #333333">=</span> random<span style="color: #333333">.</span>randrange(<span style="color: #007020">self</span><span style="color: #333333">.</span>side)
+            j <span style="color: #333333">=</span> random<span style="color: #333333">.</span>randrange(<span style="color: #007020">self</span><span style="color: #333333">.</span>side)
+        <span style="color: #007020">self</span><span style="color: #333333">.</span>board[i][j] <span style="color: #333333">=</span> v
+
+    <span style="color: #888888"># Returns the pygame font based on the windows height and size proportion</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">get_font</span>(<span style="color: #007020">self</span>, height, size_proportion):
+        font_size <span style="color: #333333">=</span> height <span style="color: #333333">//</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>side <span style="color: #333333">//</span> size_proportion
+        <span style="color: #008800; font-weight: bold">return</span> pygame<span style="color: #333333">.</span>font<span style="color: #333333">.</span>Font(<span style="color: #007020">None</span>, font_size)
+
+    <span style="color: #888888"># Draws the current state of the board</span>
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">draw</span>(<span style="color: #007020">self</span>, screen, width, height):
+        <span style="color: #888888"># font setup</span>
+        font <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>get_font(height, <span style="color: #0000DD; font-weight: bold">2</span>)
+
+        <span style="color: #888888"># calculates tile height and width based window size</span>
+        tile_height <span style="color: #333333">=</span> height <span style="color: #333333">//</span> (<span style="color: #007020">self</span><span style="color: #333333">.</span>side <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>)
+        tile_width <span style="color: #333333">=</span> width <span style="color: #333333">//</span> (<span style="color: #007020">self</span><span style="color: #333333">.</span>side <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>)
+        <span style="color: #888888"># how much to shift the text in the tiles</span>
+        to_shift <span style="color: #333333">=</span> tile_width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>
+
+        <span style="color: #888888"># loop through each spot in the board matrix</span>
+        <span style="color: #008800; font-weight: bold">for</span> i <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">range</span>(<span style="color: #007020">self</span><span style="color: #333333">.</span>side):
+            <span style="color: #008800; font-weight: bold">for</span> j <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">range</span>(<span style="color: #007020">self</span><span style="color: #333333">.</span>side):
+                <span style="color: #888888"># the tile exponent (2**exponent is the value of the tile)</span>
+                tile_exponent <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>at(i, j)
+                <span style="color: #888888"># the x, y coordinates of the tile on the screen</span>
+                tileX <span style="color: #333333">=</span> j <span style="color: #333333">*</span> tile_width <span style="color: #333333">+</span> to_shift
+                tileY <span style="color: #333333">=</span> i <span style="color: #333333">*</span> tile_height <span style="color: #333333">+</span> to_shift <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>
+                <span style="color: #888888"># tile and text color</span>
+                tile_color <span style="color: #333333">=</span> tile_colors[tile_exponent]
+                text_color <span style="color: #333333">=</span> white
+                <span style="color: #888888"># change text color to be more visible if tile has value 2 or 4</span>
+                <span style="color: #008800; font-weight: bold">if</span> tile_color <span style="color: #333333">==</span> tile_2 <span style="color: #000000; font-weight: bold">or</span> tile_color <span style="color: #333333">==</span> tile_4:
+                    text_color <span style="color: #333333">=</span> gray
+                <span style="color: #888888"># draw tile</span>
+                tile <span style="color: #333333">=</span> pygame<span style="color: #333333">.</span>draw<span style="color: #333333">.</span>rect(screen, tile_color, (tileX <span style="color: #333333">-</span> to_shift,
+                                                             tileY <span style="color: #333333">-</span> to_shift <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>, tile_width, tile_height))
+
+                tile_number <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">2</span> <span style="color: #333333">**</span> tile_exponent
+                <span style="color: #888888"># if no number, then text is &quot;&quot;]</span>
+                tile_text <span style="color: #333333">=</span> font<span style="color: #333333">.</span>render(<span style="color: #007020">str</span>(tile_number), <span style="color: #007020">True</span>,
+                                        text_color) <span style="color: #008800; font-weight: bold">if</span> tile_number <span style="color: #333333">!=</span> <span style="color: #0000DD; font-weight: bold">1</span> <span style="color: #008800; font-weight: bold">else</span> font<span style="color: #333333">.</span>render(<span style="background-color: #fff0f0">&quot;&quot;</span>, <span style="color: #007020">True</span>,
+                                                                                         text_color)
+                tile_rect <span style="color: #333333">=</span> tile_text<span style="color: #333333">.</span>get_rect(centerx<span style="color: #333333">=</span>tileX, y<span style="color: #333333">=</span>tileY)
+                screen<span style="color: #333333">.</span>blit(tile_text, tile_rect)
+        <span style="color: #888888"># Check if game is ended (lost or won)</span>
+        game_status <span style="color: #333333">=</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>end()
+        <span style="color: #008800; font-weight: bold">if</span> game_status[<span style="color: #0000DD; font-weight: bold">0</span>]:
+            <span style="color: #888888"># Display Lost or Won message</span>
+            status_text <span style="color: #333333">=</span> font<span style="color: #333333">.</span>render(game_status[<span style="color: #0000DD; font-weight: bold">1</span>], <span style="color: #007020">True</span>, text_color)
+            status_rect <span style="color: #333333">=</span> status_text<span style="color: #333333">.</span>get_rect(
+                centerx<span style="color: #333333">=</span>width <span style="color: #333333">//</span> <span style="color: #0000DD; font-weight: bold">2</span>, y<span style="color: #333333">=</span>height <span style="color: #333333">-</span> to_shift)
+            screen<span style="color: #333333">.</span>blit(status_text, status_rect)
+
+        <span style="color: #888888"># draw vertical and horizontal separating lines</span>
+        <span style="color: #008800; font-weight: bold">for</span> i <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">range</span>(<span style="color: #0000DD; font-weight: bold">2</span>):
+            <span style="color: #008800; font-weight: bold">for</span> j <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">range</span>(<span style="color: #007020">self</span><span style="color: #333333">.</span>side <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>):
+                <span style="color: #008800; font-weight: bold">if</span> i <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span>:  <span style="color: #888888"># horizontal</span>
+                    pygame<span style="color: #333333">.</span>draw<span style="color: #333333">.</span>line(
+                        screen, white, (<span style="color: #0000DD; font-weight: bold">0</span>, j <span style="color: #333333">*</span> tile_height), (tile_width <span style="color: #333333">*</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>side, j <span style="color: #333333">*</span> tile_height))
+                <span style="color: #008800; font-weight: bold">else</span>:  <span style="color: #888888"># vertical</span>
+                    pygame<span style="color: #333333">.</span>draw<span style="color: #333333">.</span>line(
+                        screen, white, (j <span style="color: #333333">*</span> tile_width, <span style="color: #0000DD; font-weight: bold">0</span>), (j <span style="color: #333333">*</span> tile_width, tile_height <span style="color: #333333">*</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>side))
+
+    <span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">end</span>(<span style="color: #007020">self</span>):
+        <span style="color: #888888"># check if 2048 tile has been reached</span>
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #0000DD; font-weight: bold">11</span> <span style="color: #000000; font-weight: bold">in</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>board:
+            <span style="color: #008800; font-weight: bold">return</span> (<span style="color: #007020">True</span>, <span style="background-color: #fff0f0">&quot;YOU WON!!&quot;</span>)
+
+        <span style="color: #888888"># check if shifting the board in any direction results in no change</span>
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>can_shift(Dir<span style="color: #333333">.</span>UP) <span style="color: #000000; font-weight: bold">or</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>can_shift(Dir<span style="color: #333333">.</span>DOWN) <span style="color: #000000; font-weight: bold">or</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>can_shift(Dir<span style="color: #333333">.</span>LEFT) <span style="color: #000000; font-weight: bold">or</span> <span style="color: #007020">self</span><span style="color: #333333">.</span>can_shift(Dir<span style="color: #333333">.</span>RIGHT):
+            <span style="color: #008800; font-weight: bold">return</span> (<span style="color: #007020">False</span>, <span style="background-color: #fff0f0">&quot;&quot;</span>)
+        <span style="color: #008800; font-weight: bold">else</span>:
+            <span style="color: #008800; font-weight: bold">return</span> (<span style="color: #007020">True</span>, <span style="background-color: #fff0f0">&quot;You Lost&quot;</span>)
+</pre>
+      </div>
 
     </div>
 
